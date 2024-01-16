@@ -53,8 +53,8 @@ fun GameRulesScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 32.dp)
-            .padding(horizontal = 16.dp)
+            .padding(top = MaterialTheme.dimensions.spaceMedium)
+            .padding(horizontal = MaterialTheme.dimensions.padding)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -67,7 +67,7 @@ fun GameRulesScreenContent(
                 text = stringResource(id = R.string.app_name),
                 style = MaterialTheme.forecastTypography.headline,
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
                 text = stringResource(id = R.string.rules, state.numRounds),
                 style = MaterialTheme.forecastTypography.bodyCentered,
@@ -76,7 +76,7 @@ fun GameRulesScreenContent(
         Button(
             modifier = Modifier
                 .width(MaterialTheme.dimensions.buttonWidth)
-                .padding(bottom = 32.dp),
+                .padding(bottom = MaterialTheme.dimensions.spaceMedium),
             onClick = { handleEvent(RulesEvents.PlayGame) }
         ) {
             Text(text = "Play")
