@@ -20,6 +20,13 @@ data class CustomTypeStyles(
         lineHeight = 40.sp,
         textAlign = TextAlign.Center,
     ),
+    val bodyCentered: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
+        textAlign = TextAlign.Center,
+    ),
 )
 
 val LocalCustomTypography = staticCompositionLocalOf { CustomTypeStyles() }

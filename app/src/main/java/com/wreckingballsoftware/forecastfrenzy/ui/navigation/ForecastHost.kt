@@ -5,9 +5,9 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.wreckingballsoftware.forecastfrenzy.ui.GameResultsScreen.GameResultsScreen
-import com.wreckingballsoftware.forecastfrenzy.ui.GameRulesScreen.GameRulesScreen
-import com.wreckingballsoftware.forecastfrenzy.ui.GameplayScreen.GameplayScreen
+import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayScreen
+import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsScreen
+import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesScreen
 
 @Composable
 fun ForecastHost() {

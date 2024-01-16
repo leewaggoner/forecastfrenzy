@@ -3,6 +3,7 @@ package com.wreckingballsoftware.forecastfrenzy.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Surface
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.ForecastHost
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.ForecastFrenzyTheme
@@ -13,8 +14,12 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         setContent {
-            ForecastFrenzyTheme {
-                ForecastHost()
+            ForecastFrenzyTheme(
+                darkTheme = true
+            ) {
+                Surface {
+                    ForecastHost()
+                }
             }
         }
     }

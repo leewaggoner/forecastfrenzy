@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.ui.GameplayScreen
+package com.wreckingballsoftware.forecastfrenzy.ui.gameplay
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

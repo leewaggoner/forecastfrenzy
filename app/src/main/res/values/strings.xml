@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Forecast Frenzy</string>
+    <string name="rules">Guess the temperature in Fahrenheit degrees right now at the given locations. There are %1$d rounds.\n\nGood Luck!</string>
 </resources>
