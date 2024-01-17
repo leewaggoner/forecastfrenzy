@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.NavGraph
@@ -30,7 +29,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun GameRulesScreen(
     navGraph: NavGraph,
-    viewModel: GameRulesViewModel = getViewModel()
+    viewModel: GameRulesViewModel = getViewModel(),
 ) {
     val navigation = viewModel.navigation.collectAsStateWithLifecycle(null)
     navigation.value?.let { nav ->
@@ -54,22 +53,22 @@ fun GameRulesScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = MaterialTheme.dimensions.spaceMedium)
-            .padding(horizontal = MaterialTheme.dimensions.padding)
-            .verticalScroll(rememberScrollState()),
+            .padding(horizontal = MaterialTheme.dimensions.padding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
             modifier = Modifier
-                .weight(1.0f),
+                .weight(1.0f)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(id = R.string.app_name),
-                style = MaterialTheme.forecastTypography.headline,
+                style = MaterialTheme.forecastTypography.headlineCentered,
             )
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
-                text = stringResource(id = R.string.rules, state.numRounds),
+                text = stringResource(id = R.string.rules, state.curAnte, state.numRounds),
                 style = MaterialTheme.forecastTypography.bodyCentered,
             )
         }

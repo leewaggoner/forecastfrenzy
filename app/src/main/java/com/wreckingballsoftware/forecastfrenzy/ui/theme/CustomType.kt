@@ -18,7 +18,32 @@ data class CustomTypeStyles(
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 40.sp,
+    ),
+    val headlineCentered: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 32.sp,
+        lineHeight = 40.sp,
         textAlign = TextAlign.Center,
+    ),
+    val title: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
+    ),
+    val titleCentered: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
+        textAlign = TextAlign.Center,
+    ),
+    val body: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
     ),
     val bodyCentered: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
@@ -27,6 +52,12 @@ data class CustomTypeStyles(
         lineHeight = 26.sp,
         textAlign = TextAlign.Center,
     ),
+    val timerText : TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 64.sp,
+        lineHeight = 72.sp,
+    )
 )
 
 val LocalCustomTypography = staticCompositionLocalOf { CustomTypeStyles() }

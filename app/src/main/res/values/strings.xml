@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Forecast Frenzy</string>
-    <string name="rules">Guess the temperature in Fahrenheit degrees right now at the given locations. There are %1$d rounds.\n\nGood Luck!</string>
+    <string name="rules">Wager a minimum of %1$d points, up to the maximum points possible for the round.\n\nGuess today\'s high temperature in Fahrenheit degrees at the given locations.\n\nPoints will be awarded based on the maximum points possible for the round, depending on how close you get to the actual high temperature for today without going over.\n\nThe number of points you can win per round will increase with the difficulty of the questions.\n\nIf you guess today\'s exact high temperature at the location, you will be awarded 2x the maximum points for the round.\n\nThere are %2$d rounds.\n\nGood Luck!</string>
+    <string name="current_round">Round</string>
+    <string name="your_points">Your Points</string>
+    <string name="round_points">Round Points</string>
+    <string name="view_rules">View Rules</string>
+    <string name="your_wager">Your Wager</string>
+    <string name="question">What is the current temperature in Fahrenheit degrees in %1$s?</string>
+    <string name="temperature">Temperature</string>
+    <string name="submit">Submit</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 data class Dimensions(
     val buttonWidth: Dp = 160.dp,
     val padding: Dp = 16.dp,
+    val spaceSmall: Dp = 16.dp,
     val spaceMedium: Dp = 32.dp,
 )
 

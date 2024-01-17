@@ -18,7 +18,7 @@ fun GameResultsScreen(navGraph: NavGraph) {
     ) {
         Text(
             text = "Game Results Screen",
-            style = MaterialTheme.forecastTypography.headline
+            style = MaterialTheme.forecastTypography.headlineCentered
         )
     }
 }
