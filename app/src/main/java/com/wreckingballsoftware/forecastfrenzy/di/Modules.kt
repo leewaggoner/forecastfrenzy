@@ -2,6 +2,7 @@ package com.wreckingballsoftware.forecastfrenzy.di
 
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
 import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
+import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
@@ -28,11 +29,18 @@ val appModule = module {
     viewModel {
         GameplayViewModel(
             handle = get(),
+            weatherRepo = get()
         )
     }
 
     factory {
         CityRepo()
+    }
+
+    factory {
+        WeatherRepo(
+            weatherService = get()
+        )
     }
 
     factory<WeatherService> {

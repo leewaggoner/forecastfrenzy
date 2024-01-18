@@ -16,4 +16,5 @@ data class GameplayState(
     val cities: List<String> = List(size = MAX_ROUNDS) { "San Diego" },
     val curGuess: Float = 34f,
     val secondsRemaining: Int = MAX_TIME,
+    val answer: Int = 34
 ) : Parcelable

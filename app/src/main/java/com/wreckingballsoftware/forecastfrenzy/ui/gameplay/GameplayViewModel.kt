@@ -1,12 +1,15 @@
 package com.wreckingballsoftware.forecastfrenzy.ui.gameplay
 
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.forecastfrenzy.data.ApiResult
+import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState
@@ -26,6 +29,7 @@ const val TIMER_INTERVAL = 1000L
 
 class GameplayViewModel(
     handle: SavedStateHandle,
+    private val weatherRepo: WeatherRepo
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
@@ -45,6 +49,17 @@ class GameplayViewModel(
 
         override fun onFinish() {
             state = state.copy(secondsRemaining = 0)
+        }
+    }
+
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = weatherRepo.getWeather("San Diego")
+            when (result) {
+                is ApiResult.Loading -> { }
+                is ApiResult.Success -> state = state.copy(answer = result.data?.toInt() ?: -150)
+                is ApiResult.Error -> Log.e("-----LEE-----", result.message)
+            }
         }
     }
 
