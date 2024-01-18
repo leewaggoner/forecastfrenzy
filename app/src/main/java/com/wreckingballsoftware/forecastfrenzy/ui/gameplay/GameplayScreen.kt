@@ -150,11 +150,11 @@ fun GameplayScreenContent(
                     onValueChange = onTextChanged,
                     textStyle = MaterialTheme.forecastTypography.body,
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
+                        imeAction = ImeAction.Send,
                         keyboardType = KeyboardType.Number,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { onDisplayResults() }
+                        onSend = { onDisplayResults() }
                     )
                 )
             }
