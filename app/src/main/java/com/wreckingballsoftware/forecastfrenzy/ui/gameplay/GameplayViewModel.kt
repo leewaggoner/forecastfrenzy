@@ -13,12 +13,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 const val MAX_ROUNDS = 5
 const val CURRENT_ANTE = 100
 const val MAX_POINTS = 1000
 const val ROUND_POINTS = 200
-const val MAX_TIME = 16
+const val MAX_TIME = 31
 const val MAX_TIMER_TIME = MAX_TIME * 1000L
 const val TIMER_INTERVAL = 1000L
 
@@ -50,11 +51,8 @@ class GameplayViewModel(
         gameTimer.start()
     }
 
-    fun onTextChanged(temperature: String) {
-        val pattern  = Regex("^[-+]?\\d*$")
-        if(temperature.matches(pattern)) {
-            state = state.copy(guess = temperature)
-        }
+    fun onGuessChanged(temperature: Float) {
+        state = state.copy(curGuess = temperature.roundToInt().toFloat())
     }
 
     fun onDisplayResults() {

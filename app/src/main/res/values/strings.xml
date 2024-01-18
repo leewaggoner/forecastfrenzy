@@ -9,4 +9,5 @@
     <string name="question">What is the current temperature in Fahrenheit degrees in %1$s?</string>
     <string name="temperature">Temperature</string>
     <string name="submit">Submit</string>
+    <string name="degrees">%1$d Degrees</string>
 </resources>

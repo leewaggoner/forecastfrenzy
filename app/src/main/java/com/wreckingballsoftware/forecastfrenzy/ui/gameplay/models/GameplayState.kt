@@ -14,6 +14,6 @@ data class GameplayState(
     val yourPoints: Int = MAX_POINTS,
     val roundPoints: Int = ROUND_POINTS,
     val cities: List<String> = List(size = MAX_ROUNDS) { "San Diego" },
-    val guess: String = "",
+    val curGuess: Float = 34f,
     val secondsRemaining: Int = MAX_TIME,
 ) : Parcelable

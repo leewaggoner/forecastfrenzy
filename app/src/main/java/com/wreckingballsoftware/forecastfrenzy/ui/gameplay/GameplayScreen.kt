@@ -10,21 +10,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
@@ -50,7 +46,7 @@ fun GameplayScreen(
 
     GameplayScreenContent(
         state = viewModel.state,
-        onTextChanged = viewModel::onTextChanged,
+        onGuessChanged = viewModel::onGuessChanged,
         onDisplayResults = viewModel::onDisplayResults,
     )
 }
@@ -59,7 +55,7 @@ fun GameplayScreen(
 @Composable
 fun GameplayScreenContent(
     state: GameplayState,
-    onTextChanged: (String) -> Unit,
+    onGuessChanged: (Float) -> Unit,
     onDisplayResults: () -> Unit,
 ) {
     Column(
@@ -141,21 +137,16 @@ fun GameplayScreenContent(
                     text = stringResource(id = R.string.question, state.cities[state.curRound]),
                     style = MaterialTheme.forecastTypography.titleCentered,
                 )
-                val text = remember { 34.toString() }
-                TextField(
-                    modifier = Modifier.padding(top = MaterialTheme.dimensions.padding),
-                    label = { Text(text = stringResource(id = R.string.temperature)) },
-                    placeholder = { Text(text = text) },
-                    value = state.guess,
-                    onValueChange = onTextChanged,
-                    textStyle = MaterialTheme.forecastTypography.body,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Send,
-                        keyboardType = KeyboardType.Number,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSend = { onDisplayResults() }
-                    )
+                Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
+                Text(
+                    text = stringResource(id = R.string.degrees, state.curGuess.toInt()),
+                    style = MaterialTheme.forecastTypography.title
+                )
+                Slider(
+                    value = state.curGuess,
+                    onValueChange = { onGuessChanged(it) },
+                    valueRange = -130f..140f,
+                    steps = 270,
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
@@ -182,7 +173,7 @@ fun GameplayScreenContent(
 fun GameplayScreenContentPreview() {
     GameplayScreenContent(
         state = GameplayState(),
-        onTextChanged = { },
+        onGuessChanged = { },
         onDisplayResults = { },
     )
 }
