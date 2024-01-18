@@ -29,14 +29,14 @@ android {
     buildTypes {
         debug {
             buildConfigField(name = "WEATHER_AUTH_KEY", type = "String", value = "\"$weatherApiKey\"")
-            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://www.thecocktaildb.com/api/\"")
+            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/2.5/\"")
 
             buildConfigField(name = "CITY_AUTH_KEY", type = "String", value = "\"$cityApiKey\"")
             buildConfigField(name = "CITY_URL", type = "String", value = "\"https://www.thecocktaildb.com/api/\"")
         }
         release {
             buildConfigField(name = "WEATHER_AUTH_KEY", type = "String", value = "\"$weatherApiKey\"")
-            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://www.thecocktaildb.com/api/\"")
+            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/2.5/\"")
 
             buildConfigField(name = "CITY_AUTH_KEY", type = "String", value = "\"$cityApiKey\"")
             buildConfigField(name = "CITY_URL", type = "String", value = "\"https://www.thecocktaildb.com/api/\"")
@@ -84,6 +84,9 @@ dependencies {
 
     implementation("io.insert-koin:koin-android:3.5.0")
     implementation("io.insert-koin:koin-androidx-compose:3.5.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
