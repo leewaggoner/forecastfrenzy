@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.Picker
+import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.NavGraph
@@ -46,8 +47,7 @@ fun GameplayScreen(
 
     GameplayScreenContent(
         state = viewModel.state,
-        onGuessChanged = viewModel::onGuessChanged,
-        onDisplayResults = viewModel::onDisplayResults,
+        handleEvent = viewModel::handleEvent,
     )
 }
 
@@ -55,8 +55,7 @@ fun GameplayScreen(
 @Composable
 fun GameplayScreenContent(
     state: GameplayState,
-    onGuessChanged: (Float) -> Unit,
-    onDisplayResults: () -> Unit,
+    handleEvent: (GameplayEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -144,7 +143,7 @@ fun GameplayScreenContent(
                 )
                 Slider(
                     value = state.curGuess,
-                    onValueChange = { onGuessChanged(it) },
+                    onValueChange = { handleEvent(GameplayEvent.GuessChanged(it)) },
                     valueRange = -130f..140f,
                     steps = 270,
                 )
@@ -159,7 +158,7 @@ fun GameplayScreenContent(
             modifier = Modifier
                 .width(MaterialTheme.dimensions.buttonWidth)
                 .padding(bottom = MaterialTheme.dimensions.spaceMedium),
-            onClick = onDisplayResults
+            onClick = { handleEvent(GameplayEvent.DisplayResults) }
         ) {
             Text(
                 text = stringResource(id = R.string.submit)
@@ -173,7 +172,6 @@ fun GameplayScreenContent(
 fun GameplayScreenContentPreview() {
     GameplayScreenContent(
         state = GameplayState(),
-        onGuessChanged = { },
-        onDisplayResults = { },
+        handleEvent = { },
     )
 }

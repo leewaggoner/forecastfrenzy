@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ class GameplayViewModel(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_LATEST,
     )
-    val gameTimer = object : CountDownTimer(
+    private val gameTimer = object : CountDownTimer(
         MAX_TIMER_TIME,
         TIMER_INTERVAL,
     ) {
@@ -47,17 +48,19 @@ class GameplayViewModel(
         }
     }
 
-    init {
-        gameTimer.start()
-    }
-
-    fun onGuessChanged(temperature: Float) {
-        state = state.copy(curGuess = temperature.roundToInt().toFloat())
-    }
-
-    fun onDisplayResults() {
-        viewModelScope.launch(Dispatchers.Main) {
-            navigation.emit(GameplayNavigation.ViewResults)
+    fun handleEvent(event: GameplayEvent) {
+        when (event) {
+            is GameplayEvent.GuessChanged -> {
+                state = state.copy(curGuess = event.temperature.roundToInt().toFloat())
+            }
+            GameplayEvent.DisplayResults -> {
+                viewModelScope.launch(Dispatchers.Main) {
+                    navigation.emit(GameplayNavigation.ViewResults)
+                }
+            }
+            is GameplayEvent.StartGame -> {
+                gameTimer.start()
+            }
         }
     }
 }
