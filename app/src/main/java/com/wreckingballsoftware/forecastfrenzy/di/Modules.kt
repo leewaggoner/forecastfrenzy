@@ -1,14 +1,17 @@
 package com.wreckingballsoftware.forecastfrenzy.di
 
+import android.net.ConnectivityManager
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
 import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
+import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -51,6 +54,10 @@ val appModule = module {
                 converterFactory = GsonConverterFactory.create(),
             )
         )
+    }
+
+    single { params ->
+        NetworkConnection(androidContext().getSystemService(ConnectivityManager::class.java), params[0])
     }
 }
 

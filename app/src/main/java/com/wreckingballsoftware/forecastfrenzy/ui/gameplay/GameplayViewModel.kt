@@ -54,8 +54,7 @@ class GameplayViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            val result = weatherRepo.getWeather("San Diego")
-            when (result) {
+            when (val result = weatherRepo.getWeather("San Diego")) {
                 is ApiResult.Loading -> { }
                 is ApiResult.Success -> state = state.copy(answer = result.data?.toInt() ?: -150)
                 is ApiResult.Error -> Log.e("-----LEE-----", result.message)

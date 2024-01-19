@@ -3,7 +3,7 @@ package com.wreckingballsoftware.forecastfrenzy.data
 data class TemperatureResponse(
     val name: String,
     val main: MainResponse,
-    val cod: String?,
+    val cod: String,
     val message: String?,
 )
 
