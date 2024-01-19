@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.Picker
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
@@ -133,7 +134,7 @@ fun GameplayScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = stringResource(id = R.string.question, state.cities[state.curRound]),
+                    text = stringResource(id = R.string.question, state.city),
                     style = MaterialTheme.forecastTypography.titleCentered,
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
@@ -163,6 +164,12 @@ fun GameplayScreenContent(
             Text(
                 text = stringResource(id = R.string.submit)
             )
+        }
+    }
+
+    if (state.errorMessage != null) {
+        FrenzyErrorAlert(message = state.errorMessage) {
+            handleEvent(GameplayEvent.DismissErrorDialog)
         }
     }
 }

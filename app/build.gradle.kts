@@ -7,7 +7,6 @@ plugins {
 }
 
 val weatherApiKey: String = gradleLocalProperties(rootDir).getProperty("WEATHER_API_KEY")
-val cityApiKey: String = gradleLocalProperties(rootDir).getProperty("CITY_API_KEY")
 
 android {
     namespace = "com.wreckingballsoftware.forecastfrenzy"
@@ -29,17 +28,15 @@ android {
     buildTypes {
         debug {
             buildConfigField(name = "WEATHER_AUTH_KEY", type = "String", value = "\"$weatherApiKey\"")
-            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/2.5/\"")
+            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/3.0/\"")
 
-            buildConfigField(name = "CITY_AUTH_KEY", type = "String", value = "\"$cityApiKey\"")
-            buildConfigField(name = "CITY_URL", type = "String", value = "\"https://www.thecocktaildb.com/api/\"")
+            buildConfigField(name = "CITY_URL", type = "String", value = "\"https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-500@public/\"")
         }
         release {
             buildConfigField(name = "WEATHER_AUTH_KEY", type = "String", value = "\"$weatherApiKey\"")
-            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/2.5/\"")
+            buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/3.0/\"")
 
-            buildConfigField(name = "CITY_AUTH_KEY", type = "String", value = "\"$cityApiKey\"")
-            buildConfigField(name = "CITY_URL", type = "String", value = "\"https://www.thecocktaildb.com/api/\"")
+            buildConfigField(name = "CITY_URL", type = "String", value = "\"https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-500@public/\"")
 
             isMinifyEnabled = false
             proguardFiles(

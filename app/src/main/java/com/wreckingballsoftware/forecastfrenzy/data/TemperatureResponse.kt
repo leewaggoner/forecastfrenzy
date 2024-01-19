@@ -1,12 +1,11 @@
 package com.wreckingballsoftware.forecastfrenzy.data
 
 data class TemperatureResponse(
-    val name: String,
-    val main: MainResponse,
+    val current: Current,
     val cod: String,
-    val message: String?,
+    val message: String? = null,
 )
 
-data class MainResponse(
-    val temp: String
+data class Current(
+    val temp: String,
 )

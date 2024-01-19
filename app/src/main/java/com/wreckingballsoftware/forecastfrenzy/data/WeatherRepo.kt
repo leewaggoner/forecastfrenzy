@@ -5,14 +5,12 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class WeatherRepo(private val weatherService: WeatherService) {
-    suspend fun getWeather(location: String): ApiResult<String> {
-        val result = callWeatherApi(location).mapToApiResult()
-        return result
-    }
+    suspend fun getWeather(lat: String, lon: String): ApiResult<String> =
+        callWeatherApi(lat, lon).mapToApiResult()
 
-    private suspend fun callWeatherApi(location: String) = withContext(Dispatchers.IO) {
+    private suspend fun callWeatherApi(lat: String, lon: String) = withContext(Dispatchers.IO) {
         try {
-            NetworkResponse.Success(weatherService.getTemperature(location))
+            NetworkResponse.Success(weatherService.getTemperature(lat, lon))
         } catch (ex: HttpException) {
             ex.toNetworkErrorResponse()
         } catch (ex: Exception) {
@@ -25,7 +23,7 @@ private fun NetworkResponse<TemperatureResponse>.mapToApiResult() : ApiResult<St
     when (this) {
         is NetworkResponse.Success -> {
             if (data.message.isNullOrEmpty()) {
-                ApiResult.Success(data.main.temp)
+                ApiResult.Success(data.current.temp)
             } else {
                 ApiResult.Error("Error code ${data.cod}: ${data.message}")
             }

@@ -5,10 +5,12 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WeatherService {
-    @GET("weather")
+    @GET("onecall")
     suspend fun getTemperature(
-        @Query("q") location: String,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         @Query("units") units: String = "imperial",
-        @Query("APPID") appId: String = BuildConfig.WEATHER_AUTH_KEY
+        @Query("exclude") exclude: String = "minutely,hourly,daily,alerts",
+        @Query("appid") appId: String = BuildConfig.WEATHER_AUTH_KEY
     ): TemperatureResponse
 }

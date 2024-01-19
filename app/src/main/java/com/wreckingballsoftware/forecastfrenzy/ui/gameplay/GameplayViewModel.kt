@@ -1,7 +1,5 @@
 package com.wreckingballsoftware.forecastfrenzy.ui.gameplay
 
-import android.os.CountDownTimer
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.wreckingballsoftware.forecastfrenzy.data.ApiResult
+import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
+import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState
@@ -23,13 +23,12 @@ const val MAX_ROUNDS = 5
 const val CURRENT_ANTE = 100
 const val MAX_POINTS = 1000
 const val ROUND_POINTS = 200
-const val MAX_TIME = 31
-const val MAX_TIMER_TIME = MAX_TIME * 1000L
-const val TIMER_INTERVAL = 1000L
 
 class GameplayViewModel(
     handle: SavedStateHandle,
-    private val weatherRepo: WeatherRepo
+    private val gameTimer: GameTimer,
+    private val weatherRepo: WeatherRepo,
+    private val cityRepo: CityRepo,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
@@ -39,25 +38,35 @@ class GameplayViewModel(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_LATEST,
     )
-    private val gameTimer = object : CountDownTimer(
-        MAX_TIMER_TIME,
-        TIMER_INTERVAL,
-    ) {
-        override fun onTick(millisUntilFinished: Long) {
-            state = state.copy(secondsRemaining = state.secondsRemaining - 1)
-        }
-
-        override fun onFinish() {
-            state = state.copy(secondsRemaining = 0)
-        }
-    }
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            when (val result = weatherRepo.getWeather("San Diego")) {
+            when (val result = weatherRepo.getWeather(lat = "45.1275", lon = "11.5433")) {
                 is ApiResult.Loading -> { }
-                is ApiResult.Success -> state = state.copy(answer = result.data?.toInt() ?: -150)
-                is ApiResult.Error -> Log.e("-----LEE-----", result.message)
+                is ApiResult.Success -> {
+                    val temp = result.data?.toFloat()?.roundToInt() ?: -150
+                }
+                is ApiResult.Error -> {
+                    handleEvent(GameplayEvent.ApiError(result.message))
+                }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.Main) {
+            when (val result = cityRepo.getCities("population > 10000000")) {
+                is ApiResult.Loading -> { }
+                is ApiResult.Success -> {
+                    val city = result.data?.get(0)?.name
+                    handleEvent(
+                        GameplayEvent.StartGame(
+                            city = city ?: "San Diego",
+                            temperature = -150
+                        )
+                    )
+                }
+                is ApiResult.Error -> {
+                    handleEvent(GameplayEvent.ApiError(result.message))
+                }
             }
         }
     }
@@ -73,7 +82,22 @@ class GameplayViewModel(
                 }
             }
             is GameplayEvent.StartGame -> {
-                gameTimer.start()
+                state = state.copy(city = event.city, answer = event.temperature)
+                gameTimer.startTimer(
+                    onTick = {
+                        state = state.copy(secondsRemaining = state.secondsRemaining - 1)
+                    },
+                    onFinish = {
+                        state = state.copy(secondsRemaining = 0)
+                        handleEvent(GameplayEvent.DisplayResults)
+                    }
+                )
+            }
+            is GameplayEvent.ApiError -> {
+                state = state.copy(errorMessage = event.message)
+            }
+            GameplayEvent.DismissErrorDialog -> {
+                state = state.copy(errorMessage = null)
             }
         }
     }

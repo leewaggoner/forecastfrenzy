@@ -3,8 +3,10 @@ package com.wreckingballsoftware.forecastfrenzy.di
 import android.net.ConnectivityManager
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
 import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
+import com.wreckingballsoftware.forecastfrenzy.data.CityService
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
+import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
 import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
@@ -32,12 +34,26 @@ val appModule = module {
     viewModel {
         GameplayViewModel(
             handle = get(),
-            weatherRepo = get()
+            gameTimer = get(),
+            weatherRepo = get(),
+            cityRepo = get(),
         )
     }
 
     factory {
-        CityRepo()
+        CityRepo(
+            cityService = get()
+        )
+    }
+
+    factory<CityService> {
+        createService(
+            retrofit = retrofitService(
+                url = BuildConfig.CITY_URL,
+                okHttpClient = okHttp(),
+                converterFactory = GsonConverterFactory.create(),
+            )
+        )
     }
 
     factory {
@@ -54,6 +70,10 @@ val appModule = module {
                 converterFactory = GsonConverterFactory.create(),
             )
         )
+    }
+
+    single {
+        GameTimer()
     }
 
     single { params ->
