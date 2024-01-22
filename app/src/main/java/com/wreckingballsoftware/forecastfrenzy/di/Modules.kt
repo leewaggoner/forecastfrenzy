@@ -9,6 +9,7 @@ import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
+import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
 import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
 import okhttp3.Interceptor
@@ -34,6 +35,13 @@ val appModule = module {
 
     viewModel {
         GameplayViewModel(
+            handle = get(),
+            gameplay = get(),
+        )
+    }
+
+    viewModel {
+        GameResultsViewModel(
             handle = get(),
             gameplay = get(),
         )

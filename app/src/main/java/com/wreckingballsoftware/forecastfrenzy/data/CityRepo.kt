@@ -9,18 +9,18 @@ import java.util.Random
 class CityRepo(
     private val cityService: CityService,
 ) {
-    private val gameCities = mutableListOf<GameCity>()
-
-    fun getNextCity() : GameCity {
-        return gameCities[0]
+    suspend fun getCities(filter: String, orderBy: String): ApiResult<GameCity> {
+        return callCityApi(filter, orderBy).mapToApiResult()
     }
 
-    suspend fun getCities(filter: String): ApiResult<List<GameCity>> =
-        callCityApi(filter).mapToApiResult(gameCities)
-
-    private suspend fun callCityApi(filter: String) = withContext(Dispatchers.IO) {
+    private suspend fun callCityApi(filter: String, orderBy: String) = withContext(Dispatchers.IO) {
         try {
-            NetworkResponse.Success(cityService.getCities(filter = filter))
+            val order = if (orderBy.isNotEmpty()) {
+                orderBy + listOf("ASC", "DESC").random()
+            } else {
+                orderBy
+            }
+            NetworkResponse.Success(cityService.getCities(filter = filter, orderBy = order))
         } catch (ex: HttpException) {
             ex.toNetworkErrorResponse()
         } catch (ex: Exception) {
@@ -29,23 +29,19 @@ class CityRepo(
     }
 }
 
-private fun NetworkResponse<CityResponse>.mapToApiResult(gameCities: MutableList<GameCity>) : ApiResult<List<GameCity>> =
+private fun NetworkResponse<CityResponse>.mapToApiResult() : ApiResult<GameCity> =
     when (this) {
         is NetworkResponse.Success -> {
             if (data.message.isNullOrEmpty()) {
-                val mutableList = data.results.toMutableList()
-                mutableList.shuffle(Random(System.currentTimeMillis()))
-                val cityList = mutableList.take(5)
-                for (city in cityList) {
-                    gameCities.add(
-                        GameCity(
-                            name = "${city.name}, ${city.country}",
-                            lat = city.latitude,
-                            lon = city.longitude,
-                        )
-                    )
-                }
-                ApiResult.Success(gameCities)
+                val cityList = data.results.toMutableList()
+                cityList.shuffle(Random(System.currentTimeMillis()))
+                val city = cityList[0]
+                val gameCity = GameCity(
+                    name = "${city.name}, ${city.country}",
+                    lat = city.latitude,
+                    lon = city.longitude,
+                )
+                ApiResult.Success(gameCity)
             } else {
                 ApiResult.Error("Error code ${data.errorCode}: ${data.message}")
             }

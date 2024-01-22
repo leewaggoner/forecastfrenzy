@@ -22,52 +22,50 @@ class Gameplay(
         private set
     var currentRoundPoints = CURRENT_ROUND_POINTS
         private set
-    private var cityList = listOf<GameCity>()
-    private var populationFilter = listOf(
+    private var city: GameCity? = null
+    private val populationFilter = listOf(
         "population > 10000000",
-        "population > 5000000 and population < 1000000",
+        "population > 5000000 and population < 10000000",
+        "population > 1000000 and population < 5000000",
         "population > 500000 and population < 1000000",
-        "population > 250000 and population < 1000000",
-        "population > 10000 and population < 250000",
+        "population > 1000 and population < 25000",
     )
+    private val orderBy = listOf(
+        "",
+        "",
+        "population ",
+        "population ",
+        "population ",
+    )
+
+    fun getCurrentCity(): String = city?.name ?: ""
+
+    fun isGameOver() = currentRound == MAX_ROUNDS - 1
+
+    fun advanceRound() {
+        if (!isGameOver()) {
+            currentRound++
+        }
+    }
 
     fun startNewGame() {
         currentRound = 0
-        cityList = listOf()
     }
 
     fun getCurrentAntePoints(): List<String> =
         (CURRENT_ANTE..CURRENT_ROUND_POINTS step 10).map { it.toString() }
 
     suspend fun startNewRound() {
-        when (val result = cityRepo.getCities(populationFilter[currentRound])) {
+        when (val result = cityRepo.getCities(populationFilter[currentRound], orderBy[currentRound])) {
             is ApiResult.Success -> {
-                cityList = result.data ?: listOf()
+                city = result.data
             }
             else -> { }
         }
     }
 
-    fun getCurrentCity(): String =
-        if (cityList.isNotEmpty() && cityList.size > currentRound)
-        {
-            cityList[currentRound].name
-        } else {
-            ""
-        }
-
     fun startTimer(onTick: () -> Unit, onFinish: () -> Unit) =
         gameTimer.startTimer(onTick, onFinish)
 
-    fun handlePlayerAnswer() {
-
-    }
-
-    private fun getCityList() {
-
-    }
-
-    private fun getTempForCurrentCity() {
-
-    }
+    fun stopTimer() = gameTimer.cancel()
 }

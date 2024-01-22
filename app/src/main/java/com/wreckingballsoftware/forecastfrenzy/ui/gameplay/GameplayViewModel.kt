@@ -100,6 +100,7 @@ class GameplayViewModel(
             //display the results screen
             GameplayEvent.DisplayResults -> {
                 viewModelScope.launch(Dispatchers.Main) {
+                    gameplay.stopTimer()
                     navigation.emit(GameplayNavigation.ViewResults)
                 }
             }
