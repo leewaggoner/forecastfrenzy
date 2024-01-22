@@ -7,6 +7,7 @@ import com.wreckingballsoftware.forecastfrenzy.data.CityService
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
+import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
 import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
@@ -34,9 +35,7 @@ val appModule = module {
     viewModel {
         GameplayViewModel(
             handle = get(),
-            gameTimer = get(),
-            weatherRepo = get(),
-            cityRepo = get(),
+            gameplay = get(),
         )
     }
 
@@ -69,6 +68,14 @@ val appModule = module {
                 okHttpClient = okHttp(),
                 converterFactory = GsonConverterFactory.create(),
             )
+        )
+    }
+
+    single {
+        Gameplay(
+            cityRepo = get(),
+            weatherRepo = get(),
+            gameTimer = get(),
         )
     }
 

@@ -9,10 +9,14 @@ import java.util.Random
 class CityRepo(
     private val cityService: CityService,
 ) {
-    suspend fun getCities(filter: String): ApiResult<List<GameCity>> {
-        val result = callCityApi(filter).mapToApiResult()
-        return result
+    private val gameCities = mutableListOf<GameCity>()
+
+    fun getNextCity() : GameCity {
+        return gameCities[0]
     }
+
+    suspend fun getCities(filter: String): ApiResult<List<GameCity>> =
+        callCityApi(filter).mapToApiResult(gameCities)
 
     private suspend fun callCityApi(filter: String) = withContext(Dispatchers.IO) {
         try {
@@ -25,16 +29,21 @@ class CityRepo(
     }
 }
 
-private fun NetworkResponse<CityResponse>.mapToApiResult() : ApiResult<List<GameCity>> =
+private fun NetworkResponse<CityResponse>.mapToApiResult(gameCities: MutableList<GameCity>) : ApiResult<List<GameCity>> =
     when (this) {
         is NetworkResponse.Success -> {
             if (data.message.isNullOrEmpty()) {
                 val mutableList = data.results.toMutableList()
                 mutableList.shuffle(Random(System.currentTimeMillis()))
                 val cityList = mutableList.take(5)
-                val gameCities = mutableListOf<GameCity>()
                 for (city in cityList) {
-                    gameCities.add(GameCity(name = "${city.name}, ${city.country}", population = city.population))
+                    gameCities.add(
+                        GameCity(
+                            name = "${city.name}, ${city.country}",
+                            lat = city.latitude,
+                            lon = city.longitude,
+                        )
+                    )
                 }
                 ApiResult.Success(gameCities)
             } else {

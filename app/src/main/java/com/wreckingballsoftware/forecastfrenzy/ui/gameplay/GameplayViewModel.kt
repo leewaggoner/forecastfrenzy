@@ -6,10 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
-import com.wreckingballsoftware.forecastfrenzy.data.ApiResult
-import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
-import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
-import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
+import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState
@@ -19,16 +16,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-const val MAX_ROUNDS = 5
-const val CURRENT_ANTE = 100
-const val MAX_POINTS = 1000
-const val ROUND_POINTS = 200
-
 class GameplayViewModel(
     handle: SavedStateHandle,
-    private val gameTimer: GameTimer,
-    private val weatherRepo: WeatherRepo,
-    private val cityRepo: CityRepo,
+    private val gameplay: Gameplay,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
@@ -40,39 +30,52 @@ class GameplayViewModel(
     )
 
     init {
-        viewModelScope.launch(Dispatchers.Main) {
-            when (val result = weatherRepo.getWeather(lat = "45.1275", lon = "11.5433")) {
-                is ApiResult.Loading -> { }
-                is ApiResult.Success -> {
-                    val temp = result.data?.toFloat()?.roundToInt() ?: -150
-                }
-                is ApiResult.Error -> {
-                    handleEvent(GameplayEvent.ApiError(result.message))
-                }
-            }
-        }
+        startRound()
+    }
 
+    private fun startRound() {
+        initPlayerInfo()
         viewModelScope.launch(Dispatchers.Main) {
-            when (val result = cityRepo.getCities("population > 10000000")) {
-                is ApiResult.Loading -> { }
-                is ApiResult.Success -> {
-                    val city = result.data?.get(0)?.name
-                    handleEvent(
-                        GameplayEvent.StartGame(
-                            city = city ?: "San Diego",
-                            temperature = -150
-                        )
-                    )
-                }
-                is ApiResult.Error -> {
-                    handleEvent(GameplayEvent.ApiError(result.message))
-                }
-            }
+            handleEvent(GameplayEvent.Loading(isLoading = true))
+            val city = getCity()
+            handleEvent(GameplayEvent.StartRound(city = city))
+            handleEvent(GameplayEvent.Loading(isLoading = false))
         }
+    }
+
+    private suspend fun getCity(): String {
+        gameplay.startNewRound()
+        val city = gameplay.getCurrentCity()
+        return city.ifEmpty {
+            handleEvent(GameplayEvent.ApiError(message = "Unknown error."))
+            ""
+        }
+    }
+
+    private fun initPlayerInfo() {
+        handleEvent(
+            GameplayEvent.InitRound(
+                curRound = gameplay.currentRound,
+                playerPoints = gameplay.currentPlayerPoints,
+                roundPoints = gameplay.currentRoundPoints,
+                antePoints = gameplay.getCurrentAntePoints(),
+            )
+        )
     }
 
     fun handleEvent(event: GameplayEvent) {
         when (event) {
+            is GameplayEvent.InitRound -> {
+                state = state.copy(
+                    curRound = event.curRound,
+                    yourPoints = event.playerPoints,
+                    roundPoints = event.roundPoints,
+                    curAnteRange = event.antePoints,
+                )
+            }
+            is GameplayEvent.Loading -> {
+                state = state.copy(isLoading = event.isLoading)
+            }
             is GameplayEvent.GuessChanged -> {
                 state = state.copy(curGuess = event.temperature.roundToInt().toFloat())
             }
@@ -81,9 +84,9 @@ class GameplayViewModel(
                     navigation.emit(GameplayNavigation.ViewResults)
                 }
             }
-            is GameplayEvent.StartGame -> {
-                state = state.copy(city = event.city, answer = event.temperature)
-                gameTimer.startTimer(
+            is GameplayEvent.StartRound -> {
+                state = state.copy(city = event.city)
+                gameplay.startTimer(
                     onTick = {
                         state = state.copy(secondsRemaining = state.secondsRemaining - 1)
                     },

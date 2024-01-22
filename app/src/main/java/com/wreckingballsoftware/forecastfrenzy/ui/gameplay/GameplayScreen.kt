@@ -1,6 +1,9 @@
 package com.wreckingballsoftware.forecastfrenzy.ui.gameplay
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -50,6 +54,21 @@ fun GameplayScreen(
         state = viewModel.state,
         handleEvent = viewModel::handleEvent,
     )
+
+    if (viewModel.state.isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { },
+                )
+        ) {
+            CircularProgressIndicator()
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,12 +138,11 @@ fun GameplayScreenContent(
                     text = stringResource(id = R.string.your_wager),
                     style = MaterialTheme.forecastTypography.title,
                 )
-                val values = remember { (CURRENT_ANTE..ROUND_POINTS step 10).map { it.toString() } }
                 Picker(
                     modifier = Modifier
                         .padding(top = MaterialTheme.dimensions.spaceSmall)
                         .fillMaxWidth(0.5f),
-                    items = values,
+                    items = state.curAnteRange,
                     visibleItemsCount = 5,
                     textStyle = MaterialTheme.forecastTypography.body,
                 )
