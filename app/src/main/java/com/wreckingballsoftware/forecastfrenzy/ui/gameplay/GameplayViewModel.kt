@@ -65,6 +65,7 @@ class GameplayViewModel(
 
     fun handleEvent(event: GameplayEvent) {
         when (event) {
+            //initialize game round
             is GameplayEvent.InitRound -> {
                 state = state.copy(
                     curRound = event.curRound,
@@ -73,32 +74,40 @@ class GameplayViewModel(
                     curAnteRange = event.antePoints,
                 )
             }
+            //show or hide progress indicator
             is GameplayEvent.Loading -> {
                 state = state.copy(isLoading = event.isLoading)
             }
+            //player changed their temperature guess
             is GameplayEvent.GuessChanged -> {
                 state = state.copy(curGuess = event.temperature.roundToInt().toFloat())
             }
-            GameplayEvent.DisplayResults -> {
-                viewModelScope.launch(Dispatchers.Main) {
-                    navigation.emit(GameplayNavigation.ViewResults)
-                }
-            }
+            //start the game round
             is GameplayEvent.StartRound -> {
                 state = state.copy(city = event.city)
+                //start the gameplay timer
                 gameplay.startTimer(
                     onTick = {
                         state = state.copy(secondsRemaining = state.secondsRemaining - 1)
                     },
                     onFinish = {
+                        //out of time -- go to the results screen
                         state = state.copy(secondsRemaining = 0)
                         handleEvent(GameplayEvent.DisplayResults)
                     }
                 )
             }
+            //display the results screen
+            GameplayEvent.DisplayResults -> {
+                viewModelScope.launch(Dispatchers.Main) {
+                    navigation.emit(GameplayNavigation.ViewResults)
+                }
+            }
+            //display the error dialog
             is GameplayEvent.ApiError -> {
                 state = state.copy(errorMessage = event.message)
             }
+            //dismiss the error dialog
             GameplayEvent.DismissErrorDialog -> {
                 state = state.copy(errorMessage = null)
             }
