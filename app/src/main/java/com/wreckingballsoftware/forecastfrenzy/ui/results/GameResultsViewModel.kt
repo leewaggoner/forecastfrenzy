@@ -18,6 +18,9 @@ import kotlinx.coroutines.launch
 class GameResultsViewModel(
     handle: SavedStateHandle,
     private val gameplay: Gameplay,
+    private val guess: Int,
+    private val bet: Int,
+    private val seconds: Int,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {

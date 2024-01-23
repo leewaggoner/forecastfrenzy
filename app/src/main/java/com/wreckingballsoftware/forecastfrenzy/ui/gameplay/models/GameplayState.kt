@@ -14,7 +14,7 @@ data class GameplayState(
     val yourPoints: Int = STARTING_PLAYER_POINTS,
     val roundPoints: Int = CURRENT_ROUND_POINTS,
     val city: String = "",
-    val curGuess: Float = 34f,
+    val curGuess: Int = 34,
     val secondsRemaining: Int = MAX_TIME,
     val errorMessage: String? = null,
     val isLoading: Boolean = false,

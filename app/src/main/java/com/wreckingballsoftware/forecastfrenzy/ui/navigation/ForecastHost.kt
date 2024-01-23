@@ -4,9 +4,11 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsScreen
@@ -25,16 +27,26 @@ fun ForecastHost(connectionState: Boolean) {
     }
 
     NavHost(navController = navController, startDestination = startDestination) {
-        composable(Destinations.GameRulesScreen) {
+        composable(route = Destinations.GameRulesScreen) {
             GameRulesScreen(navGraph = navGraph)
         }
 
-        composable(Destinations.GameplayScreen) {
+        composable(route = Destinations.GameplayScreen) {
             GameplayScreen(navGraph = navGraph)
         }
 
-        composable(Destinations.GameResultsScreen) {
-            GameResultsScreen(navGraph = navGraph)
+        composable(
+            route = Destinations.GameResultsScreen,
+            arguments = listOf(
+                navArgument("guess") { type = NavType.IntType },
+                navArgument("bet") { type = NavType.IntType },
+                navArgument("seconds") { type = NavType.IntType },
+            )
+        ) {backstackEntry ->
+            val guess: Int = backstackEntry.arguments?.getInt("guess") ?: -150
+            val bet: Int = backstackEntry.arguments?.getInt("bet") ?: 0
+            val seconds: Int = backstackEntry.arguments?.getInt("seconds") ?: 0
+            GameResultsScreen(navGraph = navGraph, guess, bet, seconds)
         }
     }
 }

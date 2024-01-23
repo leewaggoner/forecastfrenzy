@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
+import com.wreckingballsoftware.forecastfrenzy.domain.MAX_TIME
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState
@@ -19,6 +21,7 @@ import kotlin.math.roundToInt
 class GameplayViewModel(
     handle: SavedStateHandle,
     private val gameplay: Gameplay,
+    private val gameScore: GameScore,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
@@ -56,7 +59,7 @@ class GameplayViewModel(
         handleEvent(
             GameplayEvent.InitRound(
                 curRound = gameplay.currentRound,
-                playerPoints = gameplay.currentPlayerPoints,
+                playerPoints = gameScore.currentScore,
                 roundPoints = gameplay.currentRoundPoints,
                 antePoints = gameplay.getCurrentAntePoints(),
             )
@@ -80,7 +83,7 @@ class GameplayViewModel(
             }
             //player changed their temperature guess
             is GameplayEvent.GuessChanged -> {
-                state = state.copy(curGuess = event.temperature.roundToInt().toFloat())
+                state = state.copy(curGuess = event.temperature.roundToInt())
             }
             //start the game round
             is GameplayEvent.StartRound -> {
@@ -101,7 +104,13 @@ class GameplayViewModel(
             GameplayEvent.DisplayResults -> {
                 viewModelScope.launch(Dispatchers.Main) {
                     gameplay.stopTimer()
-                    navigation.emit(GameplayNavigation.ViewResults)
+                    navigation.emit(
+                        GameplayNavigation.ViewResults(
+                            guess = state.curGuess,
+                            bet = state.curAnte,
+                            seconds = MAX_TIME - state.secondsRemaining,
+                        )
+                    )
                 }
             }
             //display the error dialog

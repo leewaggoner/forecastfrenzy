@@ -18,9 +18,18 @@ class NavGraph(navController: NavController) {
             launchSingleTop = true
         }
     }
-    val navigateToGameResultsScreen: () -> Unit = {
+    val navigateToGameResultsScreen: (Int, Int, Int) -> Unit = { guess, bet, seconds ->
         navController.navigate(
-            Destinations.GameResultsScreen
+            Destinations.GameResultsScreen.replace(
+                oldValue = "{guess}",
+                newValue = guess.toString()
+            ).replace(
+                oldValue = "{bet}",
+                newValue = bet.toString()
+            ).replace(
+                oldValue = "{seconds}",
+                newValue = seconds.toString()
+            )
         ) {
             popUpTo(navController.graph.id) {
                 inclusive = true

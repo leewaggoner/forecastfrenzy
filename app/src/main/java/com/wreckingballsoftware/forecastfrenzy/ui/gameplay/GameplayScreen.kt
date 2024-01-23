@@ -46,7 +46,11 @@ fun GameplayScreen(
     val navigation = viewModel.navigation.collectAsStateWithLifecycle(null)
     navigation.value?.let { nav ->
         when (nav) {
-            GameplayNavigation.ViewResults ->navGraph.navigateToGameResultsScreen()
+            is GameplayNavigation.ViewResults ->navGraph.navigateToGameResultsScreen(
+                nav.guess,
+                nav.bet,
+                nav.seconds
+            )
         }
     }
 
@@ -157,11 +161,11 @@ fun GameplayScreenContent(
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
                 Text(
-                    text = stringResource(id = R.string.degrees, state.curGuess.toInt()),
+                    text = stringResource(id = R.string.degrees, state.curGuess),
                     style = MaterialTheme.forecastTypography.title
                 )
                 Slider(
-                    value = state.curGuess,
+                    value = state.curGuess.toFloat(),
                     onValueChange = { handleEvent(GameplayEvent.GuessChanged(it)) },
                     valueRange = -130f..140f,
                     steps = 270,

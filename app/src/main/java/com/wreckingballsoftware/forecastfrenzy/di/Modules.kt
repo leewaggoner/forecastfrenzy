@@ -6,6 +6,7 @@ import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.CityService
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
+import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
@@ -37,13 +38,17 @@ val appModule = module {
         GameplayViewModel(
             handle = get(),
             gameplay = get(),
+            gameScore = get(),
         )
     }
 
-    viewModel {
+    viewModel {params ->
         GameResultsViewModel(
             handle = get(),
             gameplay = get(),
+            guess = params[0],
+            bet = params[1],
+            seconds = params[2],
         )
     }
 
@@ -89,6 +94,10 @@ val appModule = module {
 
     single {
         GameTimer()
+    }
+
+    single {
+        GameScore()
     }
 
     single { params ->

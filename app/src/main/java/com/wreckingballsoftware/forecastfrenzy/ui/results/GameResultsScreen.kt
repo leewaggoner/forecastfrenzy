@@ -16,11 +16,17 @@ import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsNavi
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsState
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.forecastTypography
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.ParametersHolder
 
 @Composable
 fun GameResultsScreen(
     navGraph: NavGraph,
-    viewModel: GameResultsViewModel = getViewModel()
+    guess: Int,
+    bet: Int,
+    seconds: Int,
+    viewModel: GameResultsViewModel = getViewModel(
+        parameters = { ParametersHolder(mutableListOf(guess, bet, seconds)) }
+    )
 ) {
     val navigation = viewModel.navigation.collectAsStateWithLifecycle(null)
     navigation.value?.let { nav ->

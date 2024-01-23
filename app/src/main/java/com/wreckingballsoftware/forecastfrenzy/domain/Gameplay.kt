@@ -18,8 +18,6 @@ class Gameplay(
 ) {
     var currentRound = 0
         private set
-    var currentPlayerPoints = STARTING_PLAYER_POINTS
-        private set
     var currentRoundPoints = CURRENT_ROUND_POINTS
         private set
     private var city: GameCity? = null
