@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.domain.BAD_TEMP_VALUE
+import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsNavigation
@@ -18,6 +21,7 @@ import kotlinx.coroutines.launch
 class GameResultsViewModel(
     handle: SavedStateHandle,
     private val gameplay: Gameplay,
+    private val gameScore: GameScore,
     private val guess: Int,
     private val bet: Int,
     private val seconds: Int,
@@ -32,19 +36,73 @@ class GameResultsViewModel(
     )
 
     init {
+        viewModelScope.launch {
+            handleEvent(GameResultsEvent.Loading(isLoading = true))
+            val temp = gameplay.getTemp()
+            if (temp != BAD_TEMP_VALUE) {
+                handleEvent(GameResultsEvent.HandleGuess(temp))
+            } else {
+                handleEvent(GameResultsEvent.BadTemperature)
+            }
+            handleEvent(GameResultsEvent.Loading(isLoading = false))
+        }
         if (gameplay.isGameOver()) {
             handleEvent(GameResultsEvent.GameOver)
         }
+        initGameInfo()
+    }
+
+    private fun initGameInfo() {
+        handleEvent(
+            GameResultsEvent.InitResults(
+                buttonText = if (state.isGameOver) R.string.new_game else R.string.next_round,
+                headlineText = if (state.isGameOver) R.string.game_results else R.string.round_results,
+                currentRound = gameplay.currentRound + 1,
+            )
+        )
     }
 
     fun handleEvent(event: GameResultsEvent) {
         when (event) {
+            is GameResultsEvent.Loading -> {
+                state = state.copy(isLoading = event.isLoading)
+            }
+            is GameResultsEvent.InitResults -> {
+                state = state.copy(
+                    buttonTextId = event.buttonText,
+                    headlineTextId = event.headlineText,
+                    currentRound = event.currentRound,
+                )
+            }
+            is GameResultsEvent.HandleGuess -> {
+                gameScore.handleGuess(
+                    guess = guess,
+                    actualTemp = event.actualTemperature,
+                    bet = bet,
+                    seconds = seconds,
+                )
+                state = state.copy(
+                    cityName = gameplay.getCurrentCity(),
+                    guess = guess,
+                    actualTemp = event.actualTemperature,
+                    totalScore = gameScore.currentScore,
+                    roundScore = gameScore.roundScore,
+                    timeBonus = gameScore.timeBonus,
+                    roundMaxPoints = gameScore.roundMaxPoints,
+                    bet = bet,
+                )
+            }
+            GameResultsEvent.BadTemperature -> {
+
+            }
             GameResultsEvent.StartNextRound -> {
                 viewModelScope.launch(Dispatchers.Main) {
                     if (gameplay.isGameOver()) {
                         gameplay.startNewGame()
+                        gameScore.startNewGame()
                     } else {
                         gameplay.advanceRound()
+                        gameScore.advanceRound(gameplay.currentRound)
                     }
                     navigation.emit(GameResultsNavigation.StartNextRound)
                 }

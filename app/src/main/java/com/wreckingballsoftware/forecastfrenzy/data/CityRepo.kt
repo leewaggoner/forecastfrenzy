@@ -4,12 +4,12 @@ import com.wreckingballsoftware.forecastfrenzy.domain.GameCity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import java.util.Random
+import kotlin.random.Random
 
 class CityRepo(
     private val cityService: CityService,
 ) {
-    suspend fun getCities(filter: String, orderBy: String): ApiResult<GameCity> {
+    suspend fun getCity(filter: String, orderBy: String): ApiResult<GameCity> {
         return callCityApi(filter, orderBy).mapToApiResult()
     }
 
@@ -33,9 +33,7 @@ private fun NetworkResponse<CityResponse>.mapToApiResult() : ApiResult<GameCity>
     when (this) {
         is NetworkResponse.Success -> {
             if (data.message.isNullOrEmpty()) {
-                val cityList = data.results.toMutableList()
-                cityList.shuffle(Random(System.currentTimeMillis()))
-                val city = cityList[0]
+                val city = data.results.random(Random(System.currentTimeMillis()))
                 val gameCity = GameCity(
                     name = "${city.name}, ${city.country}",
                     lat = city.latitude,

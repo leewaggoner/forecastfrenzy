@@ -3,13 +3,13 @@ package com.wreckingballsoftware.forecastfrenzy.domain
 import com.wreckingballsoftware.forecastfrenzy.data.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
+import kotlin.math.roundToInt
 
 const val MAX_TIME = 31
 const val MAX_ROUNDS = 5
-const val CURRENT_ANTE = 100
-const val STARTING_PLAYER_POINTS = 1000
-const val CURRENT_ROUND_POINTS = 200
-
+const val BAD_TEMP_VALUE = -1000
+const val MINIMUM_TEMP = -130f
+const val MAXIMUM_TEMP = 140f
 
 class Gameplay(
     private val cityRepo: CityRepo,
@@ -17,8 +17,6 @@ class Gameplay(
     private val gameTimer: GameTimer,
 ) {
     var currentRound = 0
-        private set
-    var currentRoundPoints = CURRENT_ROUND_POINTS
         private set
     private var city: GameCity? = null
     private val populationFilter = listOf(
@@ -50,11 +48,8 @@ class Gameplay(
         currentRound = 0
     }
 
-    fun getCurrentAntePoints(): List<String> =
-        (CURRENT_ANTE..CURRENT_ROUND_POINTS step 10).map { it.toString() }
-
     suspend fun startNewRound() {
-        when (val result = cityRepo.getCities(populationFilter[currentRound], orderBy[currentRound])) {
+        when (val result = cityRepo.getCity(populationFilter[currentRound], orderBy[currentRound])) {
             is ApiResult.Success -> {
                 city = result.data
             }
@@ -66,4 +61,16 @@ class Gameplay(
         gameTimer.startTimer(onTick, onFinish)
 
     fun stopTimer() = gameTimer.cancel()
+
+    suspend fun getTemp(): Int =
+        when (val result =
+            weatherRepo.getWeather(lat = city?.lat ?: "", lon = city?.lon ?: "")) {
+            is ApiResult.Success -> {
+                result.data?.toFloat()?.roundToInt() ?: BAD_TEMP_VALUE
+            }
+
+            else -> {
+                BAD_TEMP_VALUE
+            }
+        }
 }

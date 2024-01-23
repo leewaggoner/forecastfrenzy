@@ -60,8 +60,8 @@ class GameplayViewModel(
             GameplayEvent.InitRound(
                 curRound = gameplay.currentRound,
                 playerPoints = gameScore.currentScore,
-                roundPoints = gameplay.currentRoundPoints,
-                antePoints = gameplay.getCurrentAntePoints(),
+                roundPoints = gameScore.roundMaxPoints,
+                antePoints = gameScore.getCurrentAntePoints(),
             )
         )
     }
@@ -84,6 +84,9 @@ class GameplayViewModel(
             //player changed their temperature guess
             is GameplayEvent.GuessChanged -> {
                 state = state.copy(curGuess = event.temperature.roundToInt())
+            }
+            is GameplayEvent.AnteChanged -> {
+                state = state.copy(curAnte = event.newAnte.toInt())
             }
             //start the game round
             is GameplayEvent.StartRound -> {

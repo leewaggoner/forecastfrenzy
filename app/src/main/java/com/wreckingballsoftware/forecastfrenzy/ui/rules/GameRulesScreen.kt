@@ -68,7 +68,7 @@ fun GameRulesScreenContent(
             )
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
-                text = stringResource(id = R.string.rules, state.curAnte, state.numRounds),
+                text = stringResource(id = R.string.rules, state.numRounds),
                 style = MaterialTheme.forecastTypography.bodyCentered,
             )
         }

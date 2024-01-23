@@ -13,4 +13,5 @@ sealed interface GameplayEvent {
     data class ApiError(val message: String) : GameplayEvent
     data object DismissErrorDialog : GameplayEvent
     data class Loading(val isLoading: Boolean) : GameplayEvent
+    data class AnteChanged(val newAnte: String) : GameplayEvent
 }

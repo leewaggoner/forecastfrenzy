@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,14 +45,15 @@ class PickerState {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Picker(
+    modifier: Modifier = Modifier,
     items: List<String>,
     state: PickerState = rememberPickerState(),
-    modifier: Modifier = Modifier,
     startIndex: Int = 0,
     visibleItemsCount: Int = 3,
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     dividerColor: Color = LocalContentColor.current,
+    onValueChanged: (String) -> Unit,
 ) {
 
     val visibleItemsMiddle = visibleItemsCount / 2
@@ -64,8 +66,8 @@ fun Picker(
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = listStartIndex)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
 
-    val itemHeightPixels = remember { mutableStateOf(0) }
-    val itemHeightDp = pixelsToDp(itemHeightPixels.value)
+    val itemHeightPixels = remember { mutableIntStateOf(0) }
+    val itemHeightDp = pixelsToDp(itemHeightPixels.intValue)
 
     val fadingEdgeGradient = remember {
         Brush.verticalGradient(
@@ -79,7 +81,10 @@ fun Picker(
         snapshotFlow { listState.firstVisibleItemIndex }
             .map { index -> getItem(index + visibleItemsMiddle) }
             .distinctUntilChanged()
-            .collect { item -> state.selectedItem = item }
+            .collect {
+                item -> state.selectedItem = item
+                onValueChanged(item)
+            }
     }
 
     Box(modifier = modifier) {
@@ -100,7 +105,7 @@ fun Picker(
                     overflow = TextOverflow.Ellipsis,
                     style = textStyle,
                     modifier = Modifier
-                        .onSizeChanged { size -> itemHeightPixels.value = size.height }
+                        .onSizeChanged { size -> itemHeightPixels.intValue = size.height }
                         .then(textModifier)
                 )
             }

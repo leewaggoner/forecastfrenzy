@@ -46,6 +46,7 @@ val appModule = module {
         GameResultsViewModel(
             handle = get(),
             gameplay = get(),
+            gameScore = get(),
             guess = params[0],
             bet = params[1],
             seconds = params[2],

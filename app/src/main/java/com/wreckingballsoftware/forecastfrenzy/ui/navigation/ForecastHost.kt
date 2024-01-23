@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.domain.BAD_TEMP_VALUE
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesScreen
@@ -43,7 +44,7 @@ fun ForecastHost(connectionState: Boolean) {
                 navArgument("seconds") { type = NavType.IntType },
             )
         ) {backstackEntry ->
-            val guess: Int = backstackEntry.arguments?.getInt("guess") ?: -150
+            val guess: Int = backstackEntry.arguments?.getInt("guess") ?: BAD_TEMP_VALUE
             val bet: Int = backstackEntry.arguments?.getInt("bet") ?: 0
             val seconds: Int = backstackEntry.arguments?.getInt("seconds") ?: 0
             GameResultsScreen(navGraph = navGraph, guess, bet, seconds)

@@ -28,6 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.domain.MAXIMUM_TEMP
+import com.wreckingballsoftware.forecastfrenzy.domain.MINIMUM_TEMP
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.Picker
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
@@ -149,6 +151,9 @@ fun GameplayScreenContent(
                     items = state.curAnteRange,
                     visibleItemsCount = 5,
                     textStyle = MaterialTheme.forecastTypography.body,
+                    onValueChanged = { newValue ->
+                        handleEvent(GameplayEvent.AnteChanged(newValue))
+                    },
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
@@ -167,7 +172,7 @@ fun GameplayScreenContent(
                 Slider(
                     value = state.curGuess.toFloat(),
                     onValueChange = { handleEvent(GameplayEvent.GuessChanged(it)) },
-                    valueRange = -130f..140f,
+                    valueRange = MINIMUM_TEMP..MAXIMUM_TEMP,
                     steps = 270,
                 )
             }
