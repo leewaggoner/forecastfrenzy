@@ -1,16 +1,14 @@
 package com.wreckingballsoftware.forecastfrenzy.data
 
-import com.wreckingballsoftware.forecastfrenzy.domain.models.GameCity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import kotlin.random.Random
 
 class CityRepo(
     private val cityService: CityService,
 ) {
-    suspend fun getCity(filter: String, orderBy: String): ApiResult<GameCity> {
-        return callCityApi(filter, orderBy).mapToApiResult()
+    suspend fun getCity(filter: String, orderBy: String): NetworkResponse<CityResponse> {
+        return callCityApi(filter, orderBy)
     }
 
     private suspend fun callCityApi(filter: String, orderBy: String) = withContext(Dispatchers.IO) {
@@ -23,23 +21,3 @@ class CityRepo(
         }
     }
 }
-
-private fun NetworkResponse<CityResponse>.mapToApiResult() : ApiResult<GameCity> =
-    when (this) {
-        is NetworkResponse.Success -> {
-            if (data.message.isNullOrEmpty()) {
-                val city = data.results.random(Random(System.currentTimeMillis()))
-                val gameCity = GameCity(
-                    name = "${city.name}, ${city.country}",
-                    lat = city.latitude,
-                    lon = city.longitude,
-                )
-                ApiResult.Success(gameCity)
-            } else {
-                ApiResult.Error("Error code ${data.errorCode}: ${data.message}")
-            }
-        }
-        is NetworkResponse.Error -> {
-            ApiResult.Error("Error code ${code}: ${exception.localizedMessage}")
-        }
-    }
