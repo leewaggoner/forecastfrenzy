@@ -3,6 +3,7 @@ package com.wreckingballsoftware.forecastfrenzy.domain
 import com.wreckingballsoftware.forecastfrenzy.data.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
+import com.wreckingballsoftware.forecastfrenzy.domain.models.GameCity
 import kotlin.math.roundToInt
 
 const val MAX_TIME = 31

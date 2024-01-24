@@ -1,6 +1,6 @@
 package com.wreckingballsoftware.forecastfrenzy.data
 
-import com.wreckingballsoftware.forecastfrenzy.domain.GameCity
+import com.wreckingballsoftware.forecastfrenzy.domain.models.GameCity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException

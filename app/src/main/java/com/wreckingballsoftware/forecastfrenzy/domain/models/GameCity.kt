@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.domain
+package com.wreckingballsoftware.forecastfrenzy.domain.models
 
 data class GameCity(
     val name: String = "",
