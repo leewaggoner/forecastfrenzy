@@ -42,7 +42,7 @@ class Gameplay(
     private fun getOrderBy(): String {
         var order = orderBy[currentRound]
         if (order.isNotEmpty()) {
-            order += listOf("ASC", "DESC").random()
+            order += listOf("ASC", "DESC").random(Random(System.currentTimeMillis()))
         }
         return order
     }
