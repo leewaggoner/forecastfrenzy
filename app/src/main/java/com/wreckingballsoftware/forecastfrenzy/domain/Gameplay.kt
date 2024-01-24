@@ -10,7 +10,7 @@ import com.wreckingballsoftware.forecastfrenzy.domain.models.GameCity
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-const val MAX_TIME = 31
+const val MAX_TIME = 31 // it'll display 30
 const val MAX_ROUNDS = 5
 const val BAD_TEMP_VALUE = -1000
 const val MINIMUM_TEMP = -130f

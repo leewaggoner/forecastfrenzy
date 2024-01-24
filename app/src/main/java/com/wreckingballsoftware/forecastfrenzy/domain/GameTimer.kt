@@ -3,7 +3,7 @@ package com.wreckingballsoftware.forecastfrenzy.domain
 import android.os.CountDownTimer
 
 const val MAX_TIME_MILLISECONDS = MAX_TIME * 1000L
-const val TIMER_INTERVAL = 1000L
+const val TIMER_INTERVAL = 1000L //one second
 
 class GameTimer : CountDownTimer(
         MAX_TIME_MILLISECONDS,
