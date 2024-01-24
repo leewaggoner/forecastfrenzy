@@ -10,5 +10,6 @@ sealed interface GameResultsEvent {
     data object StartNextRound : GameResultsEvent
     data object GameOver : GameResultsEvent
     data class HandleGuess(val actualTemperature: Int) : GameResultsEvent
-    data object BadTemperature : GameResultsEvent
+    data class ApiError(val message: String) : GameResultsEvent
+    data object DismissErrorDialog : GameResultsEvent
 }

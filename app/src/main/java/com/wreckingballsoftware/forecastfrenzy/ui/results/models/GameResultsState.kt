@@ -19,4 +19,5 @@ data class GameResultsState(
     val timeBonus: Int = 0,
     val bet: Int = 0,
     val isLoading: Boolean = false,
+    val errorMessage: String? = null,
 ) : Parcelable

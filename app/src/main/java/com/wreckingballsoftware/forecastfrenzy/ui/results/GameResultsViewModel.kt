@@ -36,23 +36,27 @@ class GameResultsViewModel(
     )
 
     init {
+        initGameInfo()
+        getCurrentTemp()
+    }
+
+    private fun getCurrentTemp() {
         viewModelScope.launch {
             handleEvent(GameResultsEvent.Loading(isLoading = true))
-            val temp = gameplay.getTemp()
+            val temp = gameplay.getTemp { errorMessage ->
+                handleEvent(GameResultsEvent.ApiError(errorMessage))
+            }
             if (temp != BAD_TEMP_VALUE) {
                 handleEvent(GameResultsEvent.HandleGuess(temp))
-            } else {
-                handleEvent(GameResultsEvent.BadTemperature)
             }
             handleEvent(GameResultsEvent.Loading(isLoading = false))
         }
-        if (gameplay.isGameOver()) {
-            handleEvent(GameResultsEvent.GameOver)
-        }
-        initGameInfo()
     }
 
     private fun initGameInfo() {
+        if (gameplay.isGameOver()) {
+            handleEvent(GameResultsEvent.GameOver)
+        }
         handleEvent(
             GameResultsEvent.InitResults(
                 buttonText = if (state.isGameOver) R.string.new_game else R.string.next_round,
@@ -92,8 +96,11 @@ class GameResultsViewModel(
                     bet = bet,
                 )
             }
-            GameResultsEvent.BadTemperature -> {
-
+            is GameResultsEvent.ApiError -> {
+                state = state.copy(errorMessage = event.message)
+            }
+            GameResultsEvent.DismissErrorDialog -> {
+                state = state.copy(errorMessage = null)
             }
             GameResultsEvent.StartNextRound -> {
                 viewModelScope.launch(Dispatchers.Main) {

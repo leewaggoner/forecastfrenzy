@@ -48,13 +48,16 @@ class Gameplay(
         currentRound = 0
     }
 
-    suspend fun startNewRound() {
+    suspend fun getNewCity(onError: (String) -> Unit): String =
         when (val result = cityRepo.getCity(populationFilter[currentRound], orderBy[currentRound])) {
             is ApiResult.Success -> {
                 city = result.data
+                getCurrentCity()
             }
-            else -> { }
-        }
+            is ApiResult.Error -> {
+                onError(result.errorMessage)
+                ""
+            }
     }
 
     fun startTimer(onTick: () -> Unit, onFinish: () -> Unit) =
@@ -62,14 +65,14 @@ class Gameplay(
 
     fun stopTimer() = gameTimer.cancel()
 
-    suspend fun getTemp(): Int =
+    suspend fun getTemp(onError: (String) -> Unit): Int =
         when (val result =
             weatherRepo.getWeather(lat = city?.lat ?: "", lon = city?.lon ?: "")) {
             is ApiResult.Success -> {
-                result.data?.toFloat()?.roundToInt() ?: BAD_TEMP_VALUE
+                result.data.toFloat().roundToInt()
             }
-
-            else -> {
+            is ApiResult.Error -> {
+                onError(result.errorMessage)
                 BAD_TEMP_VALUE
             }
         }

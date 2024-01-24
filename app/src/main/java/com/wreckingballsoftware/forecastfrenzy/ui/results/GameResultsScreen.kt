@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.NavGraph
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsNavigation
@@ -138,6 +139,12 @@ fun GameResultsContent(
             Text(
                 text = stringResource(id = state.buttonTextId)
             )
+        }
+    }
+
+    if (state.errorMessage != null) {
+        FrenzyErrorAlert(message = state.errorMessage) {
+            handleEvent(GameResultsEvent.DismissErrorDialog)
         }
     }
 }

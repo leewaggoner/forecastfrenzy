@@ -33,11 +33,11 @@ class GameplayViewModel(
     )
 
     init {
+        initPlayerInfo()
         startRound()
     }
 
     private fun startRound() {
-        initPlayerInfo()
         viewModelScope.launch(Dispatchers.Main) {
             handleEvent(GameplayEvent.Loading(isLoading = true))
             val city = getCity()
@@ -47,11 +47,8 @@ class GameplayViewModel(
     }
 
     private suspend fun getCity(): String {
-        gameplay.startNewRound()
-        val city = gameplay.getCurrentCity()
-        return city.ifEmpty {
-            handleEvent(GameplayEvent.ApiError(message = "Unknown error."))
-            ""
+        return gameplay.getNewCity { errorMessage ->
+            handleEvent(GameplayEvent.ApiError(errorMessage))
         }
     }
 

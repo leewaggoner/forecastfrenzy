@@ -69,7 +69,8 @@ class GameScore {
             }
             in 6..9 -> {
                 //guess is more than 5, but within 10 of the actual temperature
-                val percent = ((10f - absGuess) * 2f) / 10f
+                val over5Guess = abs(5 - absGuess)
+                val percent = (over5Guess * 2f) / 10f
                 val points = bet.toFloat() * percent
                 -points.roundToInt()
             }
