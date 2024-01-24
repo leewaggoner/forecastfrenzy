@@ -18,7 +18,7 @@ class Gameplay(
 ) {
     var currentRound = 0
         private set
-    private var city: GameCity? = null
+    private var city: GameCity = GameCity()
     private val populationFilter = listOf(
         "population > 10000000",
         "population > 5000000 and population < 10000000",
@@ -34,7 +34,13 @@ class Gameplay(
         "population ",
     )
 
-    fun getCurrentCity(): String = city?.name ?: ""
+    private fun getOrderBy(): String {
+        var order = orderBy[currentRound]
+        if (order.isNotEmpty()) {
+            order += listOf("ASC", "DESC").random()
+        }
+        return order
+    }
 
     fun isGameOver() = currentRound == MAX_ROUNDS - 1
 
@@ -49,16 +55,16 @@ class Gameplay(
     }
 
     suspend fun getNewCity(onError: (String) -> Unit): String =
-        when (val result = cityRepo.getCity(populationFilter[currentRound], orderBy[currentRound])) {
+        when (val result = cityRepo.getCity(populationFilter[currentRound], getOrderBy())) {
             is ApiResult.Success -> {
                 city = result.data
-                getCurrentCity()
+                city.name
             }
             is ApiResult.Error -> {
                 onError(result.errorMessage)
                 ""
             }
-    }
+        }
 
     fun startTimer(onTick: () -> Unit, onFinish: () -> Unit) =
         gameTimer.startTimer(onTick, onFinish)
@@ -67,7 +73,7 @@ class Gameplay(
 
     suspend fun getTemp(onError: (String) -> Unit): Int =
         when (val result =
-            weatherRepo.getWeather(lat = city?.lat ?: "", lon = city?.lon ?: "")) {
+            weatherRepo.getWeather(lat = city.lat, lon = city.lon)) {
             is ApiResult.Success -> {
                 result.data.toFloat().roundToInt()
             }

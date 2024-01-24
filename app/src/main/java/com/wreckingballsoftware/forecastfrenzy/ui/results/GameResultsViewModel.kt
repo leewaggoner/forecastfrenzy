@@ -22,6 +22,7 @@ class GameResultsViewModel(
     handle: SavedStateHandle,
     private val gameplay: Gameplay,
     private val gameScore: GameScore,
+    private val cityName: String,
     private val guess: Int,
     private val bet: Int,
     private val seconds: Int,
@@ -86,7 +87,7 @@ class GameResultsViewModel(
                     seconds = seconds,
                 )
                 state = state.copy(
-                    cityName = gameplay.getCurrentCity(),
+                    cityName = cityName,
                     guess = guess,
                     actualTemp = event.actualTemperature,
                     totalScore = gameScore.currentScore,

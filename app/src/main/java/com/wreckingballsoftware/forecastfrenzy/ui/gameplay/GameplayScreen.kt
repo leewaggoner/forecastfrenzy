@@ -41,6 +41,7 @@ fun GameplayScreen(
     navigation.value?.let { nav ->
         when (nav) {
             is GameplayNavigation.ViewResults ->navGraph.navigateToGameResultsScreen(
+                nav.cityName,
                 nav.guess,
                 nav.bet,
                 nav.seconds

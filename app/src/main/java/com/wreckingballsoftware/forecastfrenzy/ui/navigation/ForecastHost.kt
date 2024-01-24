@@ -39,15 +39,23 @@ fun ForecastHost(connectionState: Boolean) {
         composable(
             route = Destinations.GameResultsScreen,
             arguments = listOf(
+                navArgument("cityName") { type = NavType.StringType },
                 navArgument("guess") { type = NavType.IntType },
                 navArgument("bet") { type = NavType.IntType },
                 navArgument("seconds") { type = NavType.IntType },
             )
         ) {backstackEntry ->
+            val cityName: String = backstackEntry.arguments?.getString("cityName") ?: ""
             val guess: Int = backstackEntry.arguments?.getInt("guess") ?: BAD_TEMP_VALUE
             val bet: Int = backstackEntry.arguments?.getInt("bet") ?: 0
             val seconds: Int = backstackEntry.arguments?.getInt("seconds") ?: 0
-            GameResultsScreen(navGraph = navGraph, guess, bet, seconds)
+            GameResultsScreen(
+                navGraph = navGraph,
+                cityName = cityName,
+                guess = guess,
+                bet = bet,
+                seconds = seconds,
+            )
         }
     }
 }

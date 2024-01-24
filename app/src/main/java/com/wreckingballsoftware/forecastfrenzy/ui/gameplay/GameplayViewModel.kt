@@ -106,6 +106,7 @@ class GameplayViewModel(
                     gameplay.stopTimer()
                     navigation.emit(
                         GameplayNavigation.ViewResults(
+                            cityName = state.city,
                             guess = state.curGuess,
                             bet = state.curAnte,
                             seconds = MAX_TIME - state.secondsRemaining,

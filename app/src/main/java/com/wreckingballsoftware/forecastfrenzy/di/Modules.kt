@@ -47,9 +47,10 @@ val appModule = module {
             handle = get(),
             gameplay = get(),
             gameScore = get(),
-            guess = params[0],
-            bet = params[1],
-            seconds = params[2],
+            cityName = params[0],
+            guess = params[1],
+            bet = params[2],
+            seconds = params[3],
         )
     }
 

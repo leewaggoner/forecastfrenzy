@@ -18,9 +18,12 @@ class NavGraph(navController: NavController) {
             launchSingleTop = true
         }
     }
-    val navigateToGameResultsScreen: (Int, Int, Int) -> Unit = { guess, bet, seconds ->
+    val navigateToGameResultsScreen: (String, Int, Int, Int) -> Unit = { cityName, guess, bet, seconds ->
         navController.navigate(
             Destinations.GameResultsScreen.replace(
+                oldValue = "{cityName}",
+                newValue = cityName
+            ).replace(
                 oldValue = "{guess}",
                 newValue = guess.toString()
             ).replace(

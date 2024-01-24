@@ -36,11 +36,12 @@ import org.koin.core.parameter.ParametersHolder
 @Composable
 fun GameResultsScreen(
     navGraph: NavGraph,
+    cityName: String,
     guess: Int,
     bet: Int,
     seconds: Int,
     viewModel: GameResultsViewModel = getViewModel(
-        parameters = { ParametersHolder(mutableListOf(guess, bet, seconds)) }
+        parameters = { ParametersHolder(mutableListOf(cityName, guess, bet, seconds)) }
     )
 ) {
     val navigation = viewModel.navigation.collectAsStateWithLifecycle(null)

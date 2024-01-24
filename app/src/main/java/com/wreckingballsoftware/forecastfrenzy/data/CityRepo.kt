@@ -15,12 +15,7 @@ class CityRepo(
 
     private suspend fun callCityApi(filter: String, orderBy: String) = withContext(Dispatchers.IO) {
         try {
-            val order = if (orderBy.isNotEmpty()) {
-                orderBy + listOf("ASC", "DESC").random()
-            } else {
-                orderBy
-            }
-            NetworkResponse.Success(cityService.getCities(filter = filter, orderBy = order))
+            NetworkResponse.Success(cityService.getCities(filter = filter, orderBy = orderBy))
         } catch (ex: HttpException) {
             ex.toNetworkErrorResponse()
         } catch (ex: Exception) {
