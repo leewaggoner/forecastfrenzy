@@ -23,4 +23,5 @@
     <string name="you_bet">You bet %1$d points on this round</string>
     <string name="score_for_round">Your score for this round is</string>
     <string name="total_score">Your total score is</string>
+    <string name="play">Play</string>
 </resources>

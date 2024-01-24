@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyButton
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
@@ -98,16 +97,11 @@ fun GameplayScreenContent(
                 style = MaterialTheme.forecastTypography.timerText
             )
         }
-        Button(
+        FrenzyButton(
             modifier = Modifier
-                .width(MaterialTheme.dimensions.buttonWidth)
                 .padding(bottom = MaterialTheme.dimensions.spaceMedium),
-            onClick = { handleEvent(GameplayEvent.DisplayResults) }
-        ) {
-            Text(
-                text = stringResource(id = R.string.submit)
-            )
-        }
+            text = stringResource(id = R.string.submit)
+        ) { handleEvent(GameplayEvent.DisplayResults) }
     }
 
     if (state.errorMessage != null) {

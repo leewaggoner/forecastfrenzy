@@ -8,28 +8,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyButton
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.NavGraph
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsState
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.dimensions
-import com.wreckingballsoftware.forecastfrenzy.ui.theme.forecastTypography
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.ParametersHolder
 
@@ -89,58 +85,15 @@ fun GameResultsContent(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = stringResource(id = state.headlineTextId, state.currentRound),
-                style = MaterialTheme.forecastTypography.headlineCentered,
-            )
+            TempGuessContent(state = state)
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
-            Text(
-                text = stringResource(id = R.string.current_temperature, state.cityName),
-                style = MaterialTheme.forecastTypography.bodyCentered,
-            )
-            Text(
-                text = state.actualTemp.toString(),
-                style = MaterialTheme.forecastTypography.titleCentered,
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
-            Text(
-                text = stringResource(id = R.string.your_guess, state.guess),
-                style = MaterialTheme.forecastTypography.titleCentered,
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
-            Text(
-                text = stringResource(id = R.string.you_bet, state.bet),
-                style = MaterialTheme.forecastTypography.bodyCentered,
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
-            Text(
-                text = stringResource(id = R.string.score_for_round),
-                style = MaterialTheme.forecastTypography.bodyCentered,
-            )
-            Text(
-                text = "${state.roundScore} plus time bonus ${state.timeBonus}",
-                style = MaterialTheme.forecastTypography.titleCentered,
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
-            Text(
-                text = stringResource(id = R.string.total_score),
-                style = MaterialTheme.forecastTypography.bodyCentered,
-            )
-            Text(
-                text = state.totalScore.toString(),
-                style = MaterialTheme.forecastTypography.headline,
-            )
+            ScoreContent(state = state)
         }
-        Button(
+        FrenzyButton(
             modifier = Modifier
-                .width(MaterialTheme.dimensions.buttonWidth)
                 .padding(bottom = MaterialTheme.dimensions.spaceMedium),
-            onClick = { handleEvent(GameResultsEvent.StartNextRound) }
-        ) {
-            Text(
-                text = stringResource(id = state.buttonTextId)
-            )
-        }
+            textId = state.buttonTextId
+        ) { handleEvent(GameResultsEvent.StartNextRound) }
     }
 
     if (state.errorMessage != null) {
@@ -154,7 +107,11 @@ fun GameResultsContent(
 @Composable
 fun GameResultsContentPreview() {
     GameResultsContent(
-        state = GameResultsState(),
+        state = GameResultsState(
+            headlineTextId = R.string.round_results,
+            currentRound = 1,
+            buttonTextId = R.string.next_round,
+        ),
         handleEvent = { }
     )
 }
