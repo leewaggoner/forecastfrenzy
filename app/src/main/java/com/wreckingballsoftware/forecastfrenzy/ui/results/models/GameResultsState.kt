@@ -1,7 +1,10 @@
 package com.wreckingballsoftware.forecastfrenzy.ui.results.models
 
+import android.os.Parcelable
 import com.wreckingballsoftware.forecastfrenzy.domain.BAD_TEMP_VALUE
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class GameResultsState(
     val currentRound: Int = 0,
     val buttonTextId: Int = 0,
@@ -16,4 +19,4 @@ data class GameResultsState(
     val timeBonus: Int = 0,
     val bet: Int = 0,
     val isLoading: Boolean = false,
-)
+) : Parcelable
