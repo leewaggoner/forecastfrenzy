@@ -1,6 +1,7 @@
 package com.wreckingballsoftware.forecastfrenzy.data
 
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
+import com.wreckingballsoftware.forecastfrenzy.data.models.TemperatureResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

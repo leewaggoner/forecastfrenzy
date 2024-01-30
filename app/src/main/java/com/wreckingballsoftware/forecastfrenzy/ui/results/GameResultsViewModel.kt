@@ -107,7 +107,9 @@ class GameResultsViewModel(
                 viewModelScope.launch(Dispatchers.Main) {
                     if (gameplay.isGameOver()) {
                         gameplay.startNewGame()
-                        gameScore.startNewGame()
+                        gameScore.startNewGame { errorMessage ->
+                            handleEvent(GameResultsEvent.ApiError(message = errorMessage))
+                        }
                     } else {
                         gameplay.advanceRound()
                         gameScore.advanceRound(gameplay.currentRound)

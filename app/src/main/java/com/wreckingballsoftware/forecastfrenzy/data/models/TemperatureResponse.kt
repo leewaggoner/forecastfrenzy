@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.data
+package com.wreckingballsoftware.forecastfrenzy.data.models
 
 data class TemperatureResponse(
     val current: Current,

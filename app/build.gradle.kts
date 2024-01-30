@@ -31,12 +31,16 @@ android {
             buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/3.0/\"")
 
             buildConfigField(name = "CITY_URL", type = "String", value = "\"https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-500@public/\"")
+
+            buildConfigField(name = "HIGHSCORE_URL", type = "String", value = "\"http://thecrushingjoys.com/forecastfrenzy/\"")
         }
         release {
             buildConfigField(name = "WEATHER_AUTH_KEY", type = "String", value = "\"$weatherApiKey\"")
             buildConfigField(name = "WEATHER_URL", type = "String", value = "\"https://api.openweathermap.org/data/3.0/\"")
 
             buildConfigField(name = "CITY_URL", type = "String", value = "\"https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-500@public/\"")
+
+            buildConfigField(name = "HIGHSCORE_URL", type = "String", value = "\"http://thecrushingjoys.com/forecastfrenzy/\"")
 
             isMinifyEnabled = false
             proguardFiles(

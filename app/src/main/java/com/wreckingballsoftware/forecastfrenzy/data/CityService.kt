@@ -1,5 +1,6 @@
 package com.wreckingballsoftware.forecastfrenzy.data
 
+import com.wreckingballsoftware.forecastfrenzy.data.models.CityResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

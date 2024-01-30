@@ -4,6 +4,8 @@ import android.net.ConnectivityManager
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
 import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.CityService
+import com.wreckingballsoftware.forecastfrenzy.data.HighScoreRepo
+import com.wreckingballsoftware.forecastfrenzy.data.HighScoreService
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
 import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
@@ -94,12 +96,30 @@ val appModule = module {
         )
     }
 
+    factory {
+        HighScoreRepo(
+            highScoreService = get()
+        )
+    }
+
+    factory<HighScoreService> {
+        createService(
+            retrofit = retrofitService(
+                url = BuildConfig.HIGHSCORE_URL,
+                okHttpClient = okHttp(),
+                converterFactory = GsonConverterFactory.create(),
+            )
+        )
+    }
+
     single {
         GameTimer()
     }
 
     single {
-        GameScore()
+        GameScore(
+            highScoreRepo = get()
+        )
     }
 
     single { params ->

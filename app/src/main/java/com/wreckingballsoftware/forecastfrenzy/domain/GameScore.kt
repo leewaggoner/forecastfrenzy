@@ -1,11 +1,21 @@
 package com.wreckingballsoftware.forecastfrenzy.domain
 
+import com.wreckingballsoftware.forecastfrenzy.data.HighScoreRepo
+import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.ApiResult
+import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
+import com.wreckingballsoftware.forecastfrenzy.domain.models.HighScore
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 const val STARTING_PLAYER_POINTS = 1000
+const val HIGHSCORE_LIMIT = 5
 
-class GameScore {
+class GameScore(
+    private val highScoreRepo: HighScoreRepo,
+) {
     private val roundPoints = listOf(
         200,
         400,
@@ -29,6 +39,8 @@ class GameScore {
         private set
     var timeBonus = 0
         private set
+    private var highScores = listOf<HighScore>()
+    private var highScore: HighScore? = null
 
     fun advanceRound(currentRound: Int) {
         roundMaxPoints = roundPoints[currentRound]
@@ -37,12 +49,60 @@ class GameScore {
         timeBonus = 0
     }
 
-    fun startNewGame() {
+    fun startNewGame(onError: (String) -> Unit) {
         currentScore = STARTING_PLAYER_POINTS
         roundMaxPoints = roundPoints[0]
         currentAntePoints = antePoints[0]
         roundScore = 0
         timeBonus = 0
+//        updateHighScore(onError)
+//        getHighScore(onError)
+//        getHighScores(onError)
+//        addHighScore(onError)
+    }
+
+    private suspend fun addHighScore(onError: (String) -> Unit) {
+        when (val result = highScoreRepo.addHighScore(name = "Davey", score = 2020).mapToAdd()) {
+            is ApiResult.Success -> {
+                val id = result.data
+            }
+            is ApiResult.Error -> {
+                onError(result.errorMessage)
+            }
+        }
+    }
+
+    private suspend fun updateHighScore(onError: (String) -> Unit) {
+        when (val result = highScoreRepo.updateHighScore(id = 3L, score = 2010).mapToUpdate()) {
+            is ApiResult.Success -> {
+                val ok = result.data
+            }
+            is ApiResult.Error -> {
+                onError(result.errorMessage)
+            }
+        }
+    }
+
+    private suspend fun getHighScore(onError: (String) -> Unit) {
+        when (val result = highScoreRepo.getHighScore(3L).mapToHighScore()) {
+            is ApiResult.Success -> {
+                highScore = result.data
+            }
+            is ApiResult.Error -> {
+                onError(result.errorMessage)
+            }
+        }
+    }
+
+    private suspend fun getHighScores(onError: (String) -> Unit) {
+        when (val result = highScoreRepo.getHighScores(HIGHSCORE_LIMIT).mapToHighScoreList()) {
+            is ApiResult.Success -> {
+                highScores =  result.data
+            }
+            is ApiResult.Error -> {
+                onError(result.errorMessage)
+            }
+        }
     }
 
     fun getCurrentAntePoints(): List<String> =
@@ -82,3 +142,76 @@ class GameScore {
         currentScore += roundScore + timeBonus
     }
 }
+
+private fun NetworkResponse<HighScoresResponse>.mapToHighScoreList(): ApiResult<List<HighScore>> =
+    when (this) {
+        is NetworkResponse.Success -> {
+            if (data.error == null) {
+                val highScores = mutableListOf<HighScore>()
+                for (score in data.scores) {
+                    highScores.add(HighScore(name = score.name, score = score.score))
+                }
+                ApiResult.Success(highScores)
+            } else {
+                ApiResult.Error(
+                    errorMessage = "Error code ${data.error.errorCode}: ${data.error.errorMessage}"
+                )
+            }
+        }
+        is NetworkResponse.Error -> {
+            ApiResult.Error(errorMessage = "Error code ${code}: ${exception.localizedMessage}")
+        }
+    }
+
+private fun NetworkResponse<HighScoresResponse>.mapToHighScore(): ApiResult<HighScore> =
+    when (this) {
+        is NetworkResponse.Success -> {
+            if (data.error == null) {
+                if (data.scores.isNotEmpty()) {
+                    ApiResult.Success(HighScore(name = data.scores[0].name, score = data.scores[0].score))
+                } else {
+                    ApiResult.Error("Unknown network error.")
+                }
+            } else {
+                ApiResult.Error(
+                    errorMessage = "Error code ${data.error.errorCode}: ${data.error.errorMessage}"
+                )
+            }
+        }
+        is NetworkResponse.Error -> {
+            ApiResult.Error(errorMessage = "Error code ${code}: ${exception.localizedMessage}")
+        }
+    }
+
+private fun NetworkResponse<UpdateHighScoreResponse>.mapToUpdate(): ApiResult<Boolean> =
+    when (this) {
+        is NetworkResponse.Success -> {
+            if (data.error == null) {
+                ApiResult.Success(data.success)
+            } else {
+                ApiResult.Error(
+                    errorMessage = "Error code ${data.error.errorCode}: ${data.error.errorMessage}"
+                )
+            }
+        }
+        is NetworkResponse.Error -> {
+            ApiResult.Error(errorMessage = "Error code ${code}: ${exception.localizedMessage}")
+        }
+    }
+
+
+private fun NetworkResponse<AddHighScoreResponse>.mapToAdd(): ApiResult<Long> =
+    when (this) {
+        is NetworkResponse.Success -> {
+            if (data.error == null) {
+                ApiResult.Success(data.id)
+            } else {
+                ApiResult.Error(
+                    errorMessage = "Error code ${data.error.errorCode}: ${data.error.errorMessage}"
+                )
+            }
+        }
+        is NetworkResponse.Error -> {
+            ApiResult.Error(errorMessage = "Error code ${code}: ${exception.localizedMessage}")
+        }
+    }

@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.data
+package com.wreckingballsoftware.forecastfrenzy.data.models
 
 import retrofit2.HttpException
 
