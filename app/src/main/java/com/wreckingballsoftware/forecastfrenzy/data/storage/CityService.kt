@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.data
+package com.wreckingballsoftware.forecastfrenzy.data.storage
 
 import com.wreckingballsoftware.forecastfrenzy.data.models.CityResponse
 import retrofit2.http.GET

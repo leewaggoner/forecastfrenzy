@@ -1,11 +1,11 @@
 package com.wreckingballsoftware.forecastfrenzy.domain
 
-import com.wreckingballsoftware.forecastfrenzy.data.HighScoreRepo
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
+import com.wreckingballsoftware.forecastfrenzy.data.repositories.HighScoreRepo
 import com.wreckingballsoftware.forecastfrenzy.domain.models.HighScore
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -58,11 +58,14 @@ class GameScore(
 //        updateHighScore(onError)
 //        getHighScore(onError)
 //        getHighScores(onError)
-//        addHighScore(onError)
+//        addHighScoreEntry("Davey", onError)
     }
 
-    private suspend fun addHighScore(onError: (String) -> Unit) {
-        when (val result = highScoreRepo.addHighScore(name = "Davey", score = 2020).mapToAdd()) {
+    /**
+     * Store initial high score data
+     */
+    private suspend fun addHighScoreEntry(name: String, onError: (String) -> Unit) {
+        when (val result = highScoreRepo.addHighScoreEntry(name = name, score = 0).mapToAdd()) {
             is ApiResult.Success -> {
                 val id = result.data
             }

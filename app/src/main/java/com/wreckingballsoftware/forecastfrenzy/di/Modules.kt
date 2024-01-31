@@ -1,13 +1,21 @@
 package com.wreckingballsoftware.forecastfrenzy.di
 
+import android.content.Context
 import android.net.ConnectivityManager
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
-import com.wreckingballsoftware.forecastfrenzy.data.CityRepo
-import com.wreckingballsoftware.forecastfrenzy.data.CityService
-import com.wreckingballsoftware.forecastfrenzy.data.HighScoreRepo
-import com.wreckingballsoftware.forecastfrenzy.data.HighScoreService
-import com.wreckingballsoftware.forecastfrenzy.data.WeatherRepo
-import com.wreckingballsoftware.forecastfrenzy.data.WeatherService
+import com.wreckingballsoftware.forecastfrenzy.data.repositories.CityRepo
+import com.wreckingballsoftware.forecastfrenzy.data.repositories.HighScoreRepo
+import com.wreckingballsoftware.forecastfrenzy.data.repositories.WeatherRepo
+import com.wreckingballsoftware.forecastfrenzy.data.storage.CityService
+import com.wreckingballsoftware.forecastfrenzy.data.storage.DataStoreWrapper
+import com.wreckingballsoftware.forecastfrenzy.data.storage.HighScoreService
+import com.wreckingballsoftware.forecastfrenzy.data.storage.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
@@ -15,6 +23,9 @@ import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
 import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -28,6 +39,7 @@ import java.util.concurrent.TimeUnit
 private const val CONNECT_TIMEOUT = 30L
 private const val READ_TIMEOUT = 30L
 private const val WRITE_TIMEOUT = 30L
+private const val DATA_STORE_NAME = "com.wreckingballsoftware.forecastfrenzy"
 
 val appModule = module {
     viewModel {
@@ -112,6 +124,10 @@ val appModule = module {
         )
     }
 
+    factory {
+        DataStoreWrapper(getDataStore(androidContext()))
+    }
+
     single {
         GameTimer()
     }
@@ -151,3 +167,10 @@ private fun okHttp(authInterceptor: Interceptor? = null) = OkHttpClient.Builder(
         addInterceptor(authInterceptor)
     }
 }.build()
+
+private fun getDataStore(context: Context) : DataStore<Preferences> =
+    PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler(produceNewData = { emptyPreferences() }),
+        produceFile = { context.preferencesDataStoreFile(DATA_STORE_NAME) },
+        scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    )

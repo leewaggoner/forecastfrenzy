@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.data
+package com.wreckingballsoftware.forecastfrenzy.data.storage
 
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
@@ -29,7 +29,7 @@ interface HighScoreService {
 
     @FormUrlEncoded
     @POST("addhighscore.php")
-    suspend fun addHighScore(
+    suspend fun addHighScoreEntry(
         @Field("name") name: String,
         @Field("score") score: Int,
     ): AddHighScoreResponse
