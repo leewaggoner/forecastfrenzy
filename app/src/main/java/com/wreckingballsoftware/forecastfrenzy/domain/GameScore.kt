@@ -1,9 +1,11 @@
 package com.wreckingballsoftware.forecastfrenzy.domain
 
+import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreEntryRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.HighScoreRepo
 import com.wreckingballsoftware.forecastfrenzy.domain.models.HighScore
@@ -49,23 +51,26 @@ class GameScore(
         timeBonus = 0
     }
 
-    fun startNewGame(onError: (String) -> Unit) {
+    suspend fun startNewGame(onError: (String) -> Unit) {
         currentScore = STARTING_PLAYER_POINTS
         roundMaxPoints = roundPoints[0]
         currentAntePoints = antePoints[0]
         roundScore = 0
         timeBonus = 0
-//        updateHighScore(onError)
+//        updateHighScore(UpdateHighScoreRequest(id = 2, score = 1010), onError)
 //        getHighScore(onError)
 //        getHighScores(onError)
-//        addHighScoreEntry("Davey", onError)
+//        addHighScoreEntry(AddHighScoreEntryRequest("Lee"), onError)
     }
 
     /**
      * Store initial high score data
      */
-    private suspend fun addHighScoreEntry(name: String, onError: (String) -> Unit) {
-        when (val result = highScoreRepo.addHighScoreEntry(name = name, score = 0).mapToAdd()) {
+    private suspend fun addHighScoreEntry(
+        request: AddHighScoreEntryRequest,
+        onError: (String) -> Unit
+    ) {
+        when (val result = highScoreRepo.addHighScoreEntry(request).mapToAdd()) {
             is ApiResult.Success -> {
                 val id = result.data
             }
@@ -75,10 +80,16 @@ class GameScore(
         }
     }
 
-    private suspend fun updateHighScore(onError: (String) -> Unit) {
-        when (val result = highScoreRepo.updateHighScore(id = 3L, score = 2010).mapToUpdate()) {
+    private suspend fun updateHighScore(
+        request: UpdateHighScoreRequest,
+        onError: (String) -> Unit
+    ) {
+        when (val result = highScoreRepo.updateHighScore(request).mapToUpdate()) {
             is ApiResult.Success -> {
                 val ok = result.data
+                if (!ok) {
+                    onError("Unable to update score.")
+                }
             }
             is ApiResult.Error -> {
                 onError(result.errorMessage)

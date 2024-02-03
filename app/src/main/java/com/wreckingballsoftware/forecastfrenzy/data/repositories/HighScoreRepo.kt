@@ -1,8 +1,10 @@
 package com.wreckingballsoftware.forecastfrenzy.data.repositories
 
+import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreEntryRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.toNetworkErrorResponse
 import com.wreckingballsoftware.forecastfrenzy.data.storage.HighScoreService
@@ -36,10 +38,10 @@ class HighScoreRepo(
             }
     }
 
-    suspend fun updateHighScore(id: Long, score: Int): NetworkResponse<UpdateHighScoreResponse> =
+    suspend fun updateHighScore(request: UpdateHighScoreRequest): NetworkResponse<UpdateHighScoreResponse> =
         withContext(Dispatchers.IO) {
             try {
-                NetworkResponse.Success(highScoreService.updateHighScore(id = id, score = score))
+                NetworkResponse.Success(highScoreService.updateHighScore(request))
             } catch (ex: HttpException) {
                 ex.toNetworkErrorResponse()
             } catch (ex: Exception) {
@@ -47,10 +49,10 @@ class HighScoreRepo(
             }
         }
 
-    suspend fun addHighScoreEntry(name: String, score: Int): NetworkResponse<AddHighScoreResponse> =
+    suspend fun addHighScoreEntry(request: AddHighScoreEntryRequest): NetworkResponse<AddHighScoreResponse> =
         withContext(Dispatchers.IO) {
             try {
-                NetworkResponse.Success(highScoreService.addHighScoreEntry(name = name, score = score))
+                NetworkResponse.Success(highScoreService.addHighScoreEntry(request))
             } catch (ex: HttpException) {
                 ex.toNetworkErrorResponse()
             } catch (ex: Exception) {
