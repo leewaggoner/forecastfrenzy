@@ -17,6 +17,7 @@ class DataStoreWrapper(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKey {
         val PLAYER_ID_KEY = longPreferencesKey("PlayerId")
         val PLAYER_NAME_KEY = stringPreferencesKey("PlayerName")
+        val PLAYER_EMAIL_KEY = stringPreferencesKey("PlayerEmail")
     }
 
     suspend fun putPlayerId(id: Long) {
@@ -51,9 +52,25 @@ class DataStoreWrapper(private val dataStore: DataStore<Preferences>) {
         }.first()[PreferencesKey.PLAYER_NAME_KEY] ?: default
     }
 
+    suspend fun putPlayerEmail(email: String) = withContext(Dispatchers.IO) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.PLAYER_EMAIL_KEY] = email
+        }
+    }
+
+    suspend fun getPlayerEmail(default: String): String = withContext(Dispatchers.IO) {
+        dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.first()[PreferencesKey.PLAYER_EMAIL_KEY] ?: default
+    }
+
     suspend fun clearAll() = withContext(Dispatchers.IO) {
-        dataStore.edit {
-            it.clear()
+        dataStore.edit { preferences ->
+            preferences.clear()
         }
     }
 }

@@ -19,7 +19,9 @@ import com.wreckingballsoftware.forecastfrenzy.data.storage.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
+import com.wreckingballsoftware.forecastfrenzy.domain.Login
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
+import com.wreckingballsoftware.forecastfrenzy.ui.login.LoginViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
 import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
@@ -42,6 +44,12 @@ private const val WRITE_TIMEOUT = 30L
 private const val DATA_STORE_NAME = "com.wreckingballsoftware.forecastfrenzy"
 
 val appModule = module {
+    viewModel {
+        LoginViewModel(
+            handle = get(),
+            login = get()
+        )
+    }
     viewModel {
         GameRulesViewModel(
             handle = get(),
@@ -126,6 +134,13 @@ val appModule = module {
 
     factory {
         DataStoreWrapper(getDataStore(androidContext()))
+    }
+
+    factory {
+        Login(
+            highScoreRepo = get(),
+            dataStoreWrapper = get(),
+        )
     }
 
     single {

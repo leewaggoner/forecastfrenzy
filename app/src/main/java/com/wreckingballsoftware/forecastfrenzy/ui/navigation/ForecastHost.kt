@@ -12,15 +12,19 @@ import androidx.navigation.navArgument
 import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.domain.BAD_TEMP_VALUE
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayScreen
+import com.wreckingballsoftware.forecastfrenzy.ui.login.LoginScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesScreen
 
 @Composable
-fun ForecastHost(connectionState: Boolean) {
+fun ForecastHost(connectionState: Boolean, isLoggedIn: Boolean) {
     val navController = rememberNavController()
     val navGraph = remember(navController) { NavGraph(navController) }
 
-    val startDestination = Destinations.GameRulesScreen
+    var startDestination = Destinations.LoginScreen
+    if (isLoggedIn) {
+        startDestination = Destinations.GameRulesScreen
+    }
 
     if (!connectionState) {
         Toast.makeText(LocalContext.current, R.string.network_warning, Toast.LENGTH_LONG)
@@ -28,6 +32,10 @@ fun ForecastHost(connectionState: Boolean) {
     }
 
     NavHost(navController = navController, startDestination = startDestination) {
+        composable(route = Destinations.LoginScreen) {
+            LoginScreen(navGraph = navGraph)
+        }
+
         composable(route = Destinations.GameRulesScreen) {
             GameRulesScreen(navGraph = navGraph)
         }

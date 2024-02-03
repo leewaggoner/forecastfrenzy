@@ -13,6 +13,13 @@ import androidx.compose.ui.unit.sp
 
 @Immutable
 data class CustomTypeStyles(
+    val headlineLargeCentered: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 64.sp,
+        lineHeight = 72.sp,
+        textAlign = TextAlign.Center,
+    ),
     val headline: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,

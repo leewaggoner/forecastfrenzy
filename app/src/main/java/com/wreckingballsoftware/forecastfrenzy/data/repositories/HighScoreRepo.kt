@@ -1,8 +1,8 @@
 package com.wreckingballsoftware.forecastfrenzy.data.repositories
 
-import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreEntryRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.LoginRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
@@ -29,8 +29,7 @@ class HighScoreRepo(
     suspend fun getHighScore(id: Long): NetworkResponse<HighScoresResponse> =
         withContext(Dispatchers.IO) {
             try {
-                val result = highScoreService.getHighScore(id)
-                NetworkResponse.Success(result)
+                NetworkResponse.Success(highScoreService.getHighScore(id))
             } catch (ex: HttpException) {
                 ex.toNetworkErrorResponse()
             } catch (ex: Exception) {
@@ -49,10 +48,10 @@ class HighScoreRepo(
             }
         }
 
-    suspend fun addHighScoreEntry(request: AddHighScoreEntryRequest): NetworkResponse<AddHighScoreResponse> =
+    suspend fun login(request: LoginRequest): NetworkResponse<AddHighScoreResponse> =
         withContext(Dispatchers.IO) {
             try {
-                NetworkResponse.Success(highScoreService.addHighScoreEntry(request))
+                NetworkResponse.Success(highScoreService.login(request))
             } catch (ex: HttpException) {
                 ex.toNetworkErrorResponse()
             } catch (ex: Exception) {

@@ -12,6 +12,7 @@ data class Dimensions(
     val padding: Dp = 16.dp,
     val spaceSmall: Dp = 16.dp,
     val spaceMedium: Dp = 32.dp,
+    val spaceLarge: Dp = 64.dp,
 )
 
 val LocalDimensions = staticCompositionLocalOf { Dimensions() }

@@ -24,4 +24,11 @@
     <string name="score_for_round">Your score for this round is</string>
     <string name="total_score">Your total score is</string>
     <string name="play">Play</string>
+    <string name="name">Name</string>
+    <string name="name_label">Player Name</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="email_label">Player Email</string>
+    <string name="game_name">Forecast Frenzy!</string>
+    <string name="please_log_in">Please log in.</string>
 </resources>

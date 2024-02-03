@@ -1,8 +1,8 @@
 package com.wreckingballsoftware.forecastfrenzy.data.storage
 
-import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreEntryRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
+import com.wreckingballsoftware.forecastfrenzy.data.models.LoginRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
 import retrofit2.http.Body
@@ -27,7 +27,7 @@ interface HighScoreService {
     ): UpdateHighScoreResponse
 
     @POST("addhighscore.php")
-    suspend fun addHighScoreEntry(
-        @Body request: AddHighScoreEntryRequest,
+    suspend fun login(
+        @Body request: LoginRequest,
     ): AddHighScoreResponse
 }
