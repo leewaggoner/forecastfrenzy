@@ -16,8 +16,8 @@ class Login(
     suspend fun loginPlayer(
         request: LoginRequest,
         onError: (String) -> Unit
-    ) {
-        if (dataStoreWrapper.getPlayerId(0L) == 0L) {
+    ): Boolean {
+        return if (dataStoreWrapper.getPlayerId(0L) == 0L) {
             when (val result = highScoreRepo.login(request).mapToLogin()) {
                 is ApiResult.Success -> {
                     val id = result.data
@@ -26,13 +26,21 @@ class Login(
                         putPlayerName(request.name)
                         putPlayerEmail(request.email)
                     }
+                    true
                 }
 
                 is ApiResult.Error -> {
                     onError(result.errorMessage)
+                    false
                 }
             }
+        } else {
+            true
         }
+    }
+
+    suspend fun deletePlayerData() {
+        dataStoreWrapper.clearAll()
     }
 }
 

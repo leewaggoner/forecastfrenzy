@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.data.storage
+package com.wreckingballsoftware.forecastfrenzy.data.network
 
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.HighScoresResponse
@@ -26,7 +26,7 @@ interface HighScoreService {
         @Body request: UpdateHighScoreRequest,
     ): UpdateHighScoreResponse
 
-    @POST("addhighscore.php")
+    @POST("login.php")
     suspend fun login(
         @Body request: LoginRequest,
     ): AddHighScoreResponse

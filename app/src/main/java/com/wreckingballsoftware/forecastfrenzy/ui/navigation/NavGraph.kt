@@ -6,7 +6,12 @@ class NavGraph(navController: NavController) {
     val navigateToGameRulesScreen: () -> Unit = {
         navController.navigate(
             Destinations.GameRulesScreen
-        )
+        ) {
+            popUpTo(navController.graph.id) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
     }
     val navigateToGameplayScreen: () -> Unit = {
         navController.navigate(

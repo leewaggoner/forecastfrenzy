@@ -9,13 +9,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
+import com.wreckingballsoftware.forecastfrenzy.data.network.CityService
+import com.wreckingballsoftware.forecastfrenzy.data.network.HighScoreService
+import com.wreckingballsoftware.forecastfrenzy.data.network.NetworkConnection
+import com.wreckingballsoftware.forecastfrenzy.data.network.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.HighScoreRepo
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.WeatherRepo
-import com.wreckingballsoftware.forecastfrenzy.data.storage.CityService
 import com.wreckingballsoftware.forecastfrenzy.data.storage.DataStoreWrapper
-import com.wreckingballsoftware.forecastfrenzy.data.storage.HighScoreService
-import com.wreckingballsoftware.forecastfrenzy.data.storage.WeatherService
 import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
@@ -24,7 +25,6 @@ import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.login.LoginViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
-import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -132,7 +132,7 @@ val appModule = module {
         )
     }
 
-    factory {
+    single {
         DataStoreWrapper(getDataStore(androidContext()))
     }
 

@@ -7,7 +7,7 @@ import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.toNetworkErrorResponse
-import com.wreckingballsoftware.forecastfrenzy.data.storage.HighScoreService
+import com.wreckingballsoftware.forecastfrenzy.data.network.HighScoreService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException

@@ -3,7 +3,7 @@ package com.wreckingballsoftware.forecastfrenzy.data.repositories
 import com.wreckingballsoftware.forecastfrenzy.data.models.CityResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.toNetworkErrorResponse
-import com.wreckingballsoftware.forecastfrenzy.data.storage.CityService
+import com.wreckingballsoftware.forecastfrenzy.data.network.CityService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException

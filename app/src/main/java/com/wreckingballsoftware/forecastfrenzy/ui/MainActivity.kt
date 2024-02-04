@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.wreckingballsoftware.forecastfrenzy.data.network.NetworkConnection
 import com.wreckingballsoftware.forecastfrenzy.domain.Login
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.ForecastHost
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.ForecastFrenzyTheme
-import com.wreckingballsoftware.forecastfrenzy.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         CoroutineScope(Dispatchers.Main).launch {
+//            login.deletePlayerData()
             val isLoggedIn = login.isLoggedIn()
             setContent {
                 val connectionState by networkConnection.connection.collectAsStateWithLifecycle()

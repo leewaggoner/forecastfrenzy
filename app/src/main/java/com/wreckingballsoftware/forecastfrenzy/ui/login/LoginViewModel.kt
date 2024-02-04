@@ -6,9 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.forecastfrenzy.R
+import com.wreckingballsoftware.forecastfrenzy.data.models.LoginRequest
 import com.wreckingballsoftware.forecastfrenzy.domain.Login
+import com.wreckingballsoftware.forecastfrenzy.ui.login.models.LoginEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.login.models.LoginNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.login.models.LoginState
+import com.wreckingballsoftware.forecastfrenzy.utils.isValidEmail
+import com.wreckingballsoftware.forecastfrenzy.utils.isValidName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,17 +32,82 @@ class LoginViewModel(
         onBufferOverflow = BufferOverflow.DROP_LATEST,
     )
 
-    fun onNameChanged(name: String) {
-        state = state.copy(name = name)
-    }
-
-    fun onEmailChanged(email: String) {
-        state = state.copy(email = email)
-    }
-
-    fun onLogin() {
-        viewModelScope.launch(Dispatchers.Main) {
-            navigation.emit(LoginNavigation.GoToRulesScreen)
+    fun handleEvent(event: LoginEvent) {
+        when (event) {
+            is LoginEvent.UpdateName -> {
+                state = state.copy(
+                    name = event.name,
+                    loginEnabled = enableLoginButton(name = event.name, email = state.email),
+                    invalidNameId = 0
+                )
+            }
+            is LoginEvent.UpdateEmail -> {
+                state = state.copy(
+                    email = event.email,
+                    loginEnabled = enableLoginButton(name = state.name, email = event.email),
+                    invalidEmailId = 0
+                )
+            }
+            LoginEvent.LoginButtonPressed -> {
+                onLogin()
+            }
+            is LoginEvent.InvalidName -> {
+                state = state.copy(invalidNameId = event.messageId)
+            }
+            is LoginEvent.InvalidEmail -> {
+                state = state.copy(invalidEmailId = event.messageId)
+            }
+            LoginEvent.DismissAlert -> {
+                state = state.copy(apiErrorMessage = null)
+            }
         }
+    }
+
+    private fun onLogin() {
+        state = state.copy(invalidNameId = 0, invalidEmailId = 0)
+        if (isValidName(state.name) && isValidEmail(state.email)) {
+            viewModelScope.launch(Dispatchers.Main) {
+                state = state.copy(isLoading = true)
+                val loggedIn = login.loginPlayer(
+                    LoginRequest(name = state.name, email = state.email)
+                ) { message ->
+                    state = state.copy(apiErrorMessage = message)
+                }
+                state = state.copy(isLoading = false)
+                if (loggedIn) {
+                    navigation.emit(LoginNavigation.GoToRulesScreen)
+                }
+            }
+        }
+    }
+
+    private fun enableLoginButton(name: String, email: String): Boolean {
+        return (name.isNotEmpty() && email.isNotEmpty())
+    }
+
+    private fun isValidName(name: String): Boolean {
+        var result = true
+        if (name.isEmpty()) {
+            handleEvent(LoginEvent.InvalidName(R.string.empty_name))
+            result = false
+        }
+        if (!name.isValidName()) {
+            handleEvent(LoginEvent.InvalidName(R.string.invalid_name))
+            result = false
+        }
+        return result
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        var result = true
+        if (email.isEmpty()) {
+            handleEvent(LoginEvent.InvalidEmail(R.string.empty_email))
+            result = false
+        }
+        if (!email.isValidEmail()) {
+            handleEvent(LoginEvent.InvalidEmail(R.string.invalid_email))
+            result = false
+        }
+        return result
     }
 }

@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.data.storage
+package com.wreckingballsoftware.forecastfrenzy.data.network
 
 import com.wreckingballsoftware.forecastfrenzy.BuildConfig
 import com.wreckingballsoftware.forecastfrenzy.data.models.TemperatureResponse

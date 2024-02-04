@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.utils
+package com.wreckingballsoftware.forecastfrenzy.data.network
 
 import android.net.ConnectivityManager
 import android.net.Network
