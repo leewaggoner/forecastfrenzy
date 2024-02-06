@@ -6,6 +6,7 @@ import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.UpdateHighScoreResponse
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.HighScoreRepo
+import com.wreckingballsoftware.forecastfrenzy.data.storage.DataStoreWrapper
 import com.wreckingballsoftware.forecastfrenzy.domain.models.HighScore
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -15,6 +16,7 @@ const val HIGHSCORE_LIMIT = 5
 
 class GameScore(
     private val highScoreRepo: HighScoreRepo,
+    private val dataStoreWrapper: DataStoreWrapper,
 ) {
     private val roundPoints = listOf(
         200,
@@ -40,7 +42,6 @@ class GameScore(
     var timeBonus = 0
         private set
     private var highScores = listOf<HighScore>()
-    private var highScore: HighScore? = null
 
     fun advanceRound(currentRound: Int) {
         roundMaxPoints = roundPoints[currentRound]
@@ -55,20 +56,29 @@ class GameScore(
         currentAntePoints = antePoints[0]
         roundScore = 0
         timeBonus = 0
-//        updateHighScore(UpdateHighScoreRequest(id = 2, score = 1010), onError)
-//        getHighScore(onError)
-//        getHighScores(onError)
     }
 
-    private suspend fun updateHighScore(
-        request: UpdateHighScoreRequest,
-        onError: (String) -> Unit
+    suspend fun updateHighScore(
+        onSuccess: (Int) -> Unit,
+        onError: (String) -> Unit,
     ) {
+        val playerId = dataStoreWrapper.getPlayerId(0)
+        if (playerId == 0L) {
+            onError("Unable to get player id.")
+            return
+        }
+
+        val request = UpdateHighScoreRequest(
+            id = playerId,
+            score = currentScore
+        )
+
         when (val result = highScoreRepo.updateHighScore(request).mapToUpdate()) {
             is ApiResult.Success -> {
-                val ok = result.data
-                if (!ok) {
-                    onError("Unable to update score.")
+                if (result.data) {
+                    onSuccess(currentScore)
+                } else {
+                    onError("Unable to update high score.")
                 }
             }
             is ApiResult.Error -> {
@@ -77,10 +87,17 @@ class GameScore(
         }
     }
 
-    private suspend fun getHighScore(onError: (String) -> Unit) {
-        when (val result = highScoreRepo.getHighScore(3L).mapToHighScore()) {
+    suspend fun getHighScore(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
+        val playerId = dataStoreWrapper.getPlayerId(0)
+        if (playerId == 0L) {
+            onError("Unable to get player id.")
+            return
+        }
+
+        when (val result = highScoreRepo.getHighScore(playerId).mapToHighScore()) {
             is ApiResult.Success -> {
-                highScore = result.data
+                dataStoreWrapper.putPlayerHighScore(result.data.score)
+                onSuccess(result.data.score)
             }
             is ApiResult.Error -> {
                 onError(result.errorMessage)
@@ -88,7 +105,7 @@ class GameScore(
         }
     }
 
-    private suspend fun getHighScores(onError: (String) -> Unit) {
+    suspend fun getHighScores(onError: (String) -> Unit) {
         when (val result = highScoreRepo.getHighScores(HIGHSCORE_LIMIT).mapToHighScoreList()) {
             is ApiResult.Success -> {
                 highScores =  result.data

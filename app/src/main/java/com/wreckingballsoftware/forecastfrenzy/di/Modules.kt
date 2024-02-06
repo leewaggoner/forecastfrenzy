@@ -47,7 +47,7 @@ val appModule = module {
     viewModel {
         LoginViewModel(
             handle = get(),
-            login = get()
+            login = get(),
         )
     }
     viewModel {
@@ -78,7 +78,7 @@ val appModule = module {
 
     factory {
         CityRepo(
-            cityService = get()
+            cityService = get(),
         )
     }
 
@@ -94,7 +94,7 @@ val appModule = module {
 
     factory {
         WeatherRepo(
-            weatherService = get()
+            weatherService = get(),
         )
     }
 
@@ -118,7 +118,7 @@ val appModule = module {
 
     factory {
         HighScoreRepo(
-            highScoreService = get()
+            highScoreService = get(),
         )
     }
 
@@ -149,7 +149,8 @@ val appModule = module {
 
     single {
         GameScore(
-            highScoreRepo = get()
+            highScoreRepo = get(),
+            dataStoreWrapper = get(),
         )
     }
 

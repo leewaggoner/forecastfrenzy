@@ -5,6 +5,7 @@ import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ class DataStoreWrapper(private val dataStore: DataStore<Preferences>) {
         val PLAYER_ID_KEY = longPreferencesKey("PlayerId")
         val PLAYER_NAME_KEY = stringPreferencesKey("PlayerName")
         val PLAYER_EMAIL_KEY = stringPreferencesKey("PlayerEmail")
+        val PLAYER_HIGHSCORE_KEY = intPreferencesKey("PlayerHighScore")
     }
 
     suspend fun putPlayerId(id: Long) {
@@ -66,6 +68,22 @@ class DataStoreWrapper(private val dataStore: DataStore<Preferences>) {
                 throw exception
             }
         }.first()[PreferencesKey.PLAYER_EMAIL_KEY] ?: default
+    }
+
+    suspend fun putPlayerHighScore(score: Int) = withContext(Dispatchers.IO) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.PLAYER_HIGHSCORE_KEY] = score
+        }
+    }
+
+    suspend fun getPlayerHighScore(default: Int): Int = withContext(Dispatchers.IO) {
+        dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.first()[PreferencesKey.PLAYER_HIGHSCORE_KEY] ?: default
     }
 
     suspend fun clearAll() = withContext(Dispatchers.IO) {

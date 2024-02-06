@@ -39,6 +39,7 @@ class GameResultsViewModel(
     init {
         initGameInfo()
         getCurrentTemp()
+        handleEvent(GameResultsEvent.UpdateHighScore)
     }
 
     private fun getCurrentTemp() {
@@ -116,8 +117,48 @@ class GameResultsViewModel(
                 }
             }
             GameResultsEvent.GameOver -> {
-                state = state.copy(isGameOver = true)
+                handleGameOver()
+            }
+            GameResultsEvent.UpdateHighScore -> {
+                viewModelScope.launch(Dispatchers.Main) {
+                    handleHighScore()
+                }
             }
         }
+    }
+
+    private fun handleGameOver() {
+        state = state.copy(isGameOver = true)
+    }
+
+    private suspend fun handleHighScore() {
+        state = state.copy(isLoading = true)
+        updateHighScore {
+            viewModelScope.launch(Dispatchers.Main) {
+                getHighScore()
+            }
+        }
+    }
+
+    private suspend fun updateHighScore(onSuccess: ()-> Unit) {
+        gameScore.updateHighScore(
+            onSuccess = {
+                onSuccess()
+            },
+            onError = { message ->
+                state = state.copy(isLoading = false, errorMessage = message)
+            }
+        )
+    }
+
+    private suspend fun getHighScore() {
+        gameScore.getHighScore(
+            onSuccess = { highScore ->
+                state = state.copy(isLoading = false, highScore = highScore)
+            },
+            onError = { message ->
+                state = state.copy(isLoading = false, errorMessage = message)
+            }
+        )
     }
 }

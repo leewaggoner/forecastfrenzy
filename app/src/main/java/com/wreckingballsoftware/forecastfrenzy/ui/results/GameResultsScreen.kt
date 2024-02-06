@@ -22,6 +22,8 @@ import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyButton
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.NavGraph
+import com.wreckingballsoftware.forecastfrenzy.ui.results.content.ScoreContent
+import com.wreckingballsoftware.forecastfrenzy.ui.results.content.TempGuessContent
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsState

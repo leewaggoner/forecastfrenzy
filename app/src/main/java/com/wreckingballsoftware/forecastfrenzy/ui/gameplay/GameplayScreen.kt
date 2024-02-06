@@ -23,6 +23,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyButton
 import com.wreckingballsoftware.forecastfrenzy.ui.compose.FrenzyErrorAlert
+import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.content.GameplayGuessTempContent
+import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.content.GameplayTopRowContent
+import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.content.GameplayWagerContent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.models.GameplayState

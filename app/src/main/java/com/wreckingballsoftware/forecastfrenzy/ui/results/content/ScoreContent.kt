@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.ui.results
+package com.wreckingballsoftware.forecastfrenzy.ui.results.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +17,7 @@ import com.wreckingballsoftware.forecastfrenzy.ui.theme.dimensions
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.forecastTypography
 
 @Composable
-fun TempGuessContent(
+fun ScoreContent(
     modifier: Modifier = Modifier,
     state: GameResultsState,
 ) {
@@ -26,34 +26,51 @@ fun TempGuessContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(id = state.headlineTextId, state.currentRound),
-            style = MaterialTheme.forecastTypography.headlineCentered,
+            text = stringResource(id = R.string.you_bet, state.bet),
+            style = MaterialTheme.forecastTypography.bodyCentered,
         )
         Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
         Text(
-            text = stringResource(id = R.string.current_temperature, state.cityName),
+            text = stringResource(id = R.string.score_for_round),
             style = MaterialTheme.forecastTypography.bodyCentered,
         )
         Text(
-            text = state.actualTemp.toString(),
+            text = "${state.roundScore} plus time bonus ${state.timeBonus}",
             style = MaterialTheme.forecastTypography.titleCentered,
         )
         Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
         Text(
-            text = stringResource(id = R.string.your_guess, state.guess),
-            style = MaterialTheme.forecastTypography.titleCentered,
+            text = stringResource(id = R.string.total_score),
+            style = MaterialTheme.forecastTypography.bodyCentered,
         )
+        Text(
+            text = state.totalScore.toString(),
+            style = MaterialTheme.forecastTypography.headline,
+        )
+        if (state.isGameOver) {
+            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
+            Text(
+                text = stringResource(id = R.string.high_score),
+                style = MaterialTheme.forecastTypography.bodyCentered,
+            )
+            Text(
+                text = state.highScore.toString(),
+                style = MaterialTheme.forecastTypography.headline,
+            )
+        }
     }
 }
 
 @Preview
 @Composable
-fun TempGuessContentPreview() {
-    TempGuessContent(
+fun ScoreContentPreview() {
+    ScoreContent(
         state = GameResultsState(
-            headlineTextId = R.string.game_results,
-            currentRound = 5,
-            guess = 32,
+            bet = 100,
+            roundScore = 100,
+            timeBonus = 10,
+            totalScore = 1110,
+            isGameOver = true,
         )
     )
 }

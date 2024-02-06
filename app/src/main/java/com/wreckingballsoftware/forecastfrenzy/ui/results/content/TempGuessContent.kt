@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.ui.results
+package com.wreckingballsoftware.forecastfrenzy.ui.results.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +17,7 @@ import com.wreckingballsoftware.forecastfrenzy.ui.theme.dimensions
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.forecastTypography
 
 @Composable
-fun ScoreContent(
+fun TempGuessContent(
     modifier: Modifier = Modifier,
     state: GameResultsState,
 ) {
@@ -26,39 +26,36 @@ fun ScoreContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(id = R.string.you_bet, state.bet),
-            style = MaterialTheme.forecastTypography.bodyCentered,
+            text = stringResource(id = state.headlineTextId, state.currentRound),
+            style = MaterialTheme.forecastTypography.headlineCentered,
         )
         Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
         Text(
-            text = stringResource(id = R.string.score_for_round),
+            text = stringResource(id = R.string.current_temperature, state.cityName),
             style = MaterialTheme.forecastTypography.bodyCentered,
         )
         Text(
-            text = "${state.roundScore} plus time bonus ${state.timeBonus}",
+            text = state.actualTemp.toString(),
             style = MaterialTheme.forecastTypography.titleCentered,
         )
         Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
         Text(
-            text = stringResource(id = R.string.total_score),
-            style = MaterialTheme.forecastTypography.bodyCentered,
-        )
-        Text(
-            text = state.totalScore.toString(),
-            style = MaterialTheme.forecastTypography.headline,
+            text = stringResource(id = R.string.your_guess, state.guess),
+            style = MaterialTheme.forecastTypography.titleCentered,
         )
     }
 }
 
 @Preview
 @Composable
-fun ScoreContentPreview() {
-    ScoreContent(
+fun TempGuessContentPreview() {
+    TempGuessContent(
         state = GameResultsState(
-            bet = 100,
-            roundScore = 100,
-            timeBonus = 10,
-            totalScore = 1110,
+            headlineTextId = R.string.game_results,
+            cityName = "San Francisco",
+            actualTemp = 64,
+            currentRound = 5,
+            guess = 52,
         )
     )
 }

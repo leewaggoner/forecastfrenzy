@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.forecastfrenzy.ui.gameplay
+package com.wreckingballsoftware.forecastfrenzy.ui.gameplay.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
