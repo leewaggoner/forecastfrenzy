@@ -98,7 +98,6 @@ class Gameplay(
     }
 }
 
-
 private fun NetworkResponse<CityResponse>.mapToGameCity() : ApiResult<GameCity> =
     when (this) {
         is NetworkResponse.Success -> {
