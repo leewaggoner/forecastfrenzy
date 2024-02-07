@@ -6,6 +6,7 @@ data class HighScoreError(
 )
 
 data class HighScore(
+    val id: Long = 0,
     val name: String = "",
     val score: Int = 0,
 )

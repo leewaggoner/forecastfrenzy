@@ -64,7 +64,13 @@ data class CustomTypeStyles(
         fontWeight = FontWeight.Bold,
         fontSize = 64.sp,
         lineHeight = 72.sp,
-    )
+    ),
+    val highScoreText : TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 32.sp,
+        lineHeight = 40.sp,
+    ),
 )
 
 val LocalCustomTypography = staticCompositionLocalOf { CustomTypeStyles() }

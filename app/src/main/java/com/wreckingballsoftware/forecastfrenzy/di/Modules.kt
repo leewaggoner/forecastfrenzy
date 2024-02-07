@@ -80,7 +80,7 @@ val appModule = module {
     viewModel {
         HighScoresViewModel(
             handle = get(),
-            highScoreRepo = get(),
+            gameScore = get(),
         )
     }
 

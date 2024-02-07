@@ -37,4 +37,5 @@
     <string name="invalid_email">You must enter a valid email address.</string>
     <string name="high_score">Your current high score is</string>
     <string name="view_highscores">View High Scores</string>
+    <string name="high_scores_title">Forecast Frenzy High Scores</string>
 </resources>
