@@ -15,7 +15,6 @@ data class GameResultsState(
     val actualTemp: Int = BAD_TEMP_VALUE,
     val totalScore: Int = 0,
     val roundScore: Int = 0,
-    val roundMaxPoints: Int = 0,
     val timeBonus: Int = 0,
     val bet: Int = 0,
     val highScore:Int = 0,

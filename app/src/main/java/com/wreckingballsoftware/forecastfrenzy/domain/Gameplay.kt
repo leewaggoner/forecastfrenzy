@@ -81,20 +81,19 @@ class Gameplay(
 
     fun stopTimer() = gameTimer.cancel()
 
-    suspend fun getTemp(onError: (String) -> Unit): Int {
-        var temp = BAD_TEMP_VALUE
+    suspend fun getTemp(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
         val result = weatherRepo.getWeather(lat = city.lat, lon = city.lon)
             .mapToTemperatureString()
         when (result) {
             is ApiResult.Success -> {
-                temp = result.data.toFloat().roundToInt()
+                val temp = result.data.toFloat().roundToInt()
+                onSuccess(temp)
             }
 
             is ApiResult.Error -> {
                 onError(result.errorMessage)
             }
         }
-        return temp
     }
 }
 

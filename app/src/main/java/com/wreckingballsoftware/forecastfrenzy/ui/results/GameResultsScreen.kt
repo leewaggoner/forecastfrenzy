@@ -2,12 +2,16 @@ package com.wreckingballsoftware.forecastfrenzy.ui.results
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.forecastfrenzy.R
@@ -46,6 +51,7 @@ fun GameResultsScreen(
     navigation.value?.let { nav ->
         when (nav) {
             GameResultsNavigation.StartNextRound ->navGraph.navigateToGameplayScreen()
+            GameResultsNavigation.ViewHighScores ->navGraph.navigateToHighScoresScreen()
         }
     }
 
@@ -91,11 +97,21 @@ fun GameResultsContent(
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             ScoreContent(state = state)
         }
-        FrenzyButton(
-            modifier = Modifier
-                .padding(bottom = MaterialTheme.dimensions.spaceMedium),
-            textId = state.buttonTextId
-        ) { handleEvent(GameResultsEvent.StartNextRound) }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            if (state.isGameOver) {
+                FrenzyButton(
+                    text = stringResource(id = R.string.view_highscores)
+                ) { handleEvent(GameResultsEvent.ViewHighScores) }
+                Spacer(modifier = Modifier.width(MaterialTheme.dimensions.spaceSmall))
+            }
+            FrenzyButton(
+                textId = state.buttonTextId
+            ) { handleEvent(GameResultsEvent.StartNextRound) }
+        }
+        Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
     }
 
     if (state.errorMessage != null) {
@@ -113,6 +129,7 @@ fun GameResultsContentPreview() {
             headlineTextId = R.string.round_results,
             currentRound = 1,
             buttonTextId = R.string.next_round,
+            isGameOver = true,
         ),
         handleEvent = { }
     )

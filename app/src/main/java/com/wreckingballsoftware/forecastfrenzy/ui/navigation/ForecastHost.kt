@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.wreckingballsoftware.forecastfrenzy.R
 import com.wreckingballsoftware.forecastfrenzy.domain.BAD_TEMP_VALUE
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayScreen
+import com.wreckingballsoftware.forecastfrenzy.ui.highscores.HighScoresScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.login.LoginScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsScreen
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesScreen
@@ -64,6 +65,9 @@ fun ForecastHost(connectionState: Boolean, isLoggedIn: Boolean) {
                 bet = bet,
                 seconds = seconds,
             )
+        }
+        composable(route = Destinations.HighScoresScreen) {
+            HighScoresScreen(navGraph = navGraph)
         }
     }
 }

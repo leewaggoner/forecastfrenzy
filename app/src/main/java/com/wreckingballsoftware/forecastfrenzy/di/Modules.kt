@@ -22,6 +22,7 @@ import com.wreckingballsoftware.forecastfrenzy.domain.GameTimer
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.domain.Login
 import com.wreckingballsoftware.forecastfrenzy.ui.gameplay.GameplayViewModel
+import com.wreckingballsoftware.forecastfrenzy.ui.highscores.HighScoresViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.login.LoginViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.results.GameResultsViewModel
 import com.wreckingballsoftware.forecastfrenzy.ui.rules.GameRulesViewModel
@@ -73,6 +74,13 @@ val appModule = module {
             guess = params[1],
             bet = params[2],
             seconds = params[3],
+        )
+    }
+
+    viewModel {
+        HighScoresViewModel(
+            handle = get(),
+            highScoreRepo = get(),
         )
     }
 

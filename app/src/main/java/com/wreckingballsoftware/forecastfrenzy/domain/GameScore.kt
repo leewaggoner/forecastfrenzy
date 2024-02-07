@@ -59,7 +59,7 @@ class GameScore(
     }
 
     suspend fun updateHighScore(
-        onSuccess: (Int) -> Unit,
+        onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit,
     ) {
         val playerId = dataStoreWrapper.getPlayerId(0)
@@ -75,8 +75,9 @@ class GameScore(
 
         when (val result = highScoreRepo.updateHighScore(request).mapToUpdate()) {
             is ApiResult.Success -> {
-                if (result.data) {
-                    onSuccess(currentScore)
+                val success = result.data
+                if (success) {
+                    onSuccess(true)
                 } else {
                     onError("Unable to update high score.")
                 }

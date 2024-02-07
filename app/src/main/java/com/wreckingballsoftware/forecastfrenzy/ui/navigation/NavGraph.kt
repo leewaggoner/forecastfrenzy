@@ -45,4 +45,9 @@ class NavGraph(navController: NavController) {
             launchSingleTop = true
         }
     }
+    val navigateToHighScoresScreen: () -> Unit = {
+        navController.navigate(
+            Destinations.HighScoresScreen
+        )
+    }
 }

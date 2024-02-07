@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.wreckingballsoftware.forecastfrenzy.R
-import com.wreckingballsoftware.forecastfrenzy.domain.BAD_TEMP_VALUE
 import com.wreckingballsoftware.forecastfrenzy.domain.GameScore
 import com.wreckingballsoftware.forecastfrenzy.domain.Gameplay
 import com.wreckingballsoftware.forecastfrenzy.ui.results.models.GameResultsEvent
@@ -37,34 +36,69 @@ class GameResultsViewModel(
     )
 
     init {
-        initGameInfo()
-        getCurrentTemp()
-        handleEvent(GameResultsEvent.UpdateHighScore)
+        initResultsScreen()
     }
 
-    private fun getCurrentTemp() {
-        viewModelScope.launch {
+    private fun initResultsScreen() {
+        handleEvent(GameResultsEvent.InitResultsScreen)
+        viewModelScope.launch(Dispatchers.Main) {
             handleEvent(GameResultsEvent.Loading(isLoading = true))
-            val temp = gameplay.getTemp { errorMessage ->
-                handleEvent(GameResultsEvent.ApiError(errorMessage))
-            }
-            if (temp != BAD_TEMP_VALUE) {
-                handleEvent(GameResultsEvent.HandleGuess(temp))
+            val gotCurrentTemp = getCurrentTemp()
+            if (gameplay.isGameOver() && gotCurrentTemp) {
+                handleHighScore()
             }
             handleEvent(GameResultsEvent.Loading(isLoading = false))
         }
     }
 
-    private fun initGameInfo() {
-        if (gameplay.isGameOver()) {
-            handleEvent(GameResultsEvent.GameOver)
+    private suspend fun getCurrentTemp(): Boolean {
+        var success = false
+        gameplay.getTemp(
+            onSuccess = { temp ->
+                gameScore.handleGuess(
+                    guess = guess,
+                    actualTemp = temp,
+                    bet = bet,
+                    seconds = seconds,
+                )
+                handleEvent(GameResultsEvent.HandleGuessResult(temp))
+                success = true
+            },
+            onError =  { errorMessage ->
+                handleEvent(GameResultsEvent.ApiError(errorMessage))
+            }
+        )
+        return success
+    }
+
+    private suspend fun handleHighScore() {
+        val updatedHighScore = updateHighScore()
+        if (updatedHighScore) {
+            getCurrentHighScore()
         }
-        handleEvent(
-            GameResultsEvent.InitResults(
-                buttonText = if (state.isGameOver) R.string.new_game else R.string.next_round,
-                headlineText = if (state.isGameOver) R.string.game_results else R.string.round_results,
-                currentRound = gameplay.currentRound + 1,
-            )
+    }
+
+    private suspend fun updateHighScore(): Boolean {
+        var updatedHighScore = false
+        gameScore.updateHighScore(
+            onSuccess = { success ->
+                updatedHighScore = success
+            },
+            onError = { message ->
+                handleEvent(GameResultsEvent.ApiError(message))
+            }
+        )
+        return updatedHighScore
+    }
+
+    private suspend fun getCurrentHighScore() {
+        gameScore.getHighScore(
+            onSuccess = { highScore ->
+                handleEvent(GameResultsEvent.UpdateHighScore(highScore))
+            },
+            onError = { message ->
+                handleEvent(GameResultsEvent.ApiError(message))
+            }
         )
     }
 
@@ -73,29 +107,24 @@ class GameResultsViewModel(
             is GameResultsEvent.Loading -> {
                 state = state.copy(isLoading = event.isLoading)
             }
-            is GameResultsEvent.InitResults -> {
+            is GameResultsEvent.InitResultsScreen -> {
+                val isGameOver = gameplay.isGameOver()
                 state = state.copy(
-                    buttonTextId = event.buttonText,
-                    headlineTextId = event.headlineText,
-                    currentRound = event.currentRound,
-                )
-            }
-            is GameResultsEvent.HandleGuess -> {
-                gameScore.handleGuess(
-                    guess = guess,
-                    actualTemp = event.actualTemperature,
-                    bet = bet,
-                    seconds = seconds,
-                )
-                state = state.copy(
+                    isGameOver = isGameOver,
+                    buttonTextId = if (isGameOver) R.string.new_game else R.string.next_round,
+                    headlineTextId = if (isGameOver) R.string.game_results else R.string.round_results,
+                    currentRound = gameplay.currentRound + 1,
                     cityName = cityName,
                     guess = guess,
+                    bet = bet,
+                )
+            }
+            is GameResultsEvent.HandleGuessResult -> {
+                state = state.copy(
                     actualTemp = event.actualTemperature,
                     totalScore = gameScore.currentScore,
                     roundScore = gameScore.roundScore,
                     timeBonus = gameScore.timeBonus,
-                    roundMaxPoints = gameScore.roundMaxPoints,
-                    bet = bet,
                 )
             }
             is GameResultsEvent.ApiError -> {
@@ -116,49 +145,14 @@ class GameResultsViewModel(
                     navigation.emit(GameResultsNavigation.StartNextRound)
                 }
             }
-            GameResultsEvent.GameOver -> {
-                handleGameOver()
+            is GameResultsEvent.UpdateHighScore -> {
+                state = state.copy(highScore = event.highScore)
             }
-            GameResultsEvent.UpdateHighScore -> {
+            GameResultsEvent.ViewHighScores -> {
                 viewModelScope.launch(Dispatchers.Main) {
-                    handleHighScore()
+                    navigation.emit(GameResultsNavigation.ViewHighScores)
                 }
             }
         }
-    }
-
-    private fun handleGameOver() {
-        state = state.copy(isGameOver = true)
-    }
-
-    private suspend fun handleHighScore() {
-        state = state.copy(isLoading = true)
-        updateHighScore {
-            viewModelScope.launch(Dispatchers.Main) {
-                getHighScore()
-            }
-        }
-    }
-
-    private suspend fun updateHighScore(onSuccess: ()-> Unit) {
-        gameScore.updateHighScore(
-            onSuccess = {
-                onSuccess()
-            },
-            onError = { message ->
-                state = state.copy(isLoading = false, errorMessage = message)
-            }
-        )
-    }
-
-    private suspend fun getHighScore() {
-        gameScore.getHighScore(
-            onSuccess = { highScore ->
-                state = state.copy(isLoading = false, highScore = highScore)
-            },
-            onError = { message ->
-                state = state.copy(isLoading = false, errorMessage = message)
-            }
-        )
     }
 }
