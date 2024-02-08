@@ -25,6 +25,7 @@ class Login(
                         putPlayerId(id)
                         putPlayerName(request.name)
                         putPlayerEmail(request.email)
+                        putPlayerHighScore(0)
                     }
                     true
                 }

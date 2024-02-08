@@ -41,7 +41,8 @@ class GameScore(
         private set
     var timeBonus = 0
         private set
-    private var playerId = 0L
+
+    suspend fun getCachedHighScore(): Int = dataStoreWrapper.getPlayerHighScore(0)
 
     fun advanceRound(currentRound: Int) {
         roundMaxPoints = roundPoints[currentRound]
@@ -62,7 +63,7 @@ class GameScore(
         onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit,
     ) {
-        playerId = dataStoreWrapper.getPlayerId(0)
+        val playerId = dataStoreWrapper.getPlayerId(0)
         if (playerId == 0L) {
             onError("Unable to get player id.")
             return
@@ -89,7 +90,7 @@ class GameScore(
     }
 
     suspend fun getHighScore(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
-        playerId = dataStoreWrapper.getPlayerId(0)
+        val playerId = dataStoreWrapper.getPlayerId(0)
         if (playerId == 0L) {
             onError("Unable to get player id.")
             return
@@ -107,7 +108,32 @@ class GameScore(
     }
 
     suspend fun getHighScores(onSuccess: (List<HighScore>) -> Unit, onError: (String) -> Unit) {
-        when (val result = highScoreRepo.getHighScores(HIGHSCORE_LIMIT).mapToHighScoreList()) {
+        val playerId = dataStoreWrapper.getPlayerId(0)
+        if (playerId == 0L) {
+            onError("Unable to get player id.")
+            return
+        }
+
+        val playerName = dataStoreWrapper.getPlayerName("")
+        if (playerName.isEmpty()) {
+            onError("Unable to get player name.")
+            return
+        }
+
+        val playerHighScore = dataStoreWrapper.getPlayerHighScore(-1)
+        if (playerHighScore == -1) {
+            onError("Unable to get player high score.")
+            return
+        }
+
+        val playerScore = HighScore(
+            id = playerId,
+            name = playerName,
+            score = playerHighScore,
+            isPlayer = true,
+        )
+
+        when (val result = highScoreRepo.getHighScores(HIGHSCORE_LIMIT).mapToHighScoreList(playerScore)) {
             is ApiResult.Success -> {
                 val highScores = result.data
                 onSuccess(highScores)
@@ -156,18 +182,29 @@ class GameScore(
     }
 }
 
-private fun NetworkResponse<HighScoresResponse>.mapToHighScoreList(): ApiResult<List<HighScore>> =
+private fun NetworkResponse<HighScoresResponse>.mapToHighScoreList(
+    playerScore: HighScore
+): ApiResult<List<HighScore>> =
     when (this) {
         is NetworkResponse.Success -> {
             if (data.error == null) {
                 if (data.scores.isEmpty()) {
                     ApiResult.Error("Could not retrieve high scores.")
                 } else {
-                    val highScores = mutableListOf<HighScore>()
-                    for (score in data.scores) {
-                        //TODO: if playerId is not in the high scores, add it to the end
-                        highScores.add(HighScore(id = score.id, score.name, score = score.score))
+                    var playerScoreIndex = -1
+                    val highScores = data.scores.mapIndexed { index, score ->
+                        var isPlayer = false
+                        if (score.id == playerScore.id) {
+                            isPlayer = true
+                            playerScoreIndex = index
+                        }
+                        HighScore(id = score.id,score.name, score = score.score, isPlayer = isPlayer)
+                    }.toMutableList()
+
+                    if (playerScoreIndex == -1) {
+                        highScores[HIGHSCORE_LIMIT - 1] = playerScore
                     }
+
                     ApiResult.Success(highScores)
                 }
             } else {

@@ -72,9 +72,12 @@ class GameResultsViewModel(
     }
 
     private suspend fun handleHighScore() {
-        val updatedHighScore = updateHighScore()
-        if (updatedHighScore) {
-            getCurrentHighScore()
+        var success = updateHighScore()
+        if (success) {
+            success = getCurrentHighScore()
+        }
+        if (!success) {
+            handleEvent(GameResultsEvent.UpdateHighScore(gameScore.getCachedHighScore()))
         }
     }
 
@@ -91,15 +94,18 @@ class GameResultsViewModel(
         return updatedHighScore
     }
 
-    private suspend fun getCurrentHighScore() {
+    private suspend fun getCurrentHighScore(): Boolean {
+        var gotHighScore = false
         gameScore.getHighScore(
             onSuccess = { highScore ->
+                gotHighScore = true
                 handleEvent(GameResultsEvent.UpdateHighScore(highScore))
             },
             onError = { message ->
                 handleEvent(GameResultsEvent.ApiError(message))
             }
         )
+        return gotHighScore
     }
 
     fun handleEvent(event: GameResultsEvent) {

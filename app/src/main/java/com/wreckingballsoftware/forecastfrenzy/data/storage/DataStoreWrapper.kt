@@ -60,15 +60,15 @@ class DataStoreWrapper(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun getPlayerEmail(default: String): String = withContext(Dispatchers.IO) {
-        dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }.first()[PreferencesKey.PLAYER_EMAIL_KEY] ?: default
-    }
+//    suspend fun getPlayerEmail(default: String): String = withContext(Dispatchers.IO) {
+//        dataStore.data.catch { exception ->
+//            if (exception is IOException) {
+//                emit(emptyPreferences())
+//            } else {
+//                throw exception
+//            }
+//        }.first()[PreferencesKey.PLAYER_EMAIL_KEY] ?: default
+//    }
 
     suspend fun putPlayerHighScore(score: Int) = withContext(Dispatchers.IO) {
         dataStore.edit { preferences ->

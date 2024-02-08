@@ -4,4 +4,5 @@ data class HighScore(
     val id: Long,
     val name: String,
     val score: Int,
+    val isPlayer: Boolean = false,
 )

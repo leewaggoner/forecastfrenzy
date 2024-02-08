@@ -85,7 +85,11 @@ fun HighScoresScreenContent(
                     ) {
                         Text(
                             text = highScore.name,
-                            style = MaterialTheme.forecastTypography.highScoreText,
+                            style = if (highScore.isPlayer) {
+                                MaterialTheme.forecastTypography.highScoreHighlightText
+                            } else {
+                                MaterialTheme.forecastTypography.highScoreText
+                            },
                         )
                     }
                     Spacer(modifier = Modifier.width(MaterialTheme.dimensions.spaceSmall))
@@ -94,7 +98,11 @@ fun HighScoresScreenContent(
                     ) {
                         Text(
                             text = highScore.score.toString(),
-                            style = MaterialTheme.forecastTypography.highScoreText,
+                            style = if (highScore.isPlayer) {
+                                MaterialTheme.forecastTypography.highScoreHighlightText
+                            } else {
+                                MaterialTheme.forecastTypography.highScoreText
+                            },
                         )
                     }
                 }
@@ -116,7 +124,7 @@ fun HighScoresScreenPreview() {
         state = HighScoresState(
             highScores = listOf(
                 HighScore(0, "John", 100),
-                HighScore(1, "Jane", 90),
+                HighScore(1, "Jane", 90, true),
                 HighScore(2, "Jim", 80),
             )
         ),
