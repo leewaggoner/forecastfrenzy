@@ -1,11 +1,11 @@
 package com.wreckingballsoftware.forecastfrenzy.domain
 
 import com.wreckingballsoftware.forecastfrenzy.data.models.AddHighScoreResponse
-import com.wreckingballsoftware.forecastfrenzy.data.models.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.data.models.LoginRequest
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.HighScoreRepo
 import com.wreckingballsoftware.forecastfrenzy.data.storage.DataStoreWrapper
+import com.wreckingballsoftware.forecastfrenzy.domain.models.ApiResult
 
 class Login(
     private val highScoreRepo: HighScoreRepo,

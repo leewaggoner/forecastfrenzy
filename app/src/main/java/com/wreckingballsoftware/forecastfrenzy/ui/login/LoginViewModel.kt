@@ -13,11 +13,14 @@ import com.wreckingballsoftware.forecastfrenzy.ui.login.models.LoginEvent
 import com.wreckingballsoftware.forecastfrenzy.ui.login.models.LoginNavigation
 import com.wreckingballsoftware.forecastfrenzy.ui.login.models.LoginState
 import com.wreckingballsoftware.forecastfrenzy.utils.isValidEmail
-import com.wreckingballsoftware.forecastfrenzy.utils.isValidName
+import com.wreckingballsoftware.forecastfrenzy.utils.isValidNameCharacters
+import com.wreckingballsoftware.forecastfrenzy.utils.isValidNameLength
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+
+const val MAX_NAME_LENGTH = 10
 
 class LoginViewModel(
     handle: SavedStateHandle,
@@ -35,11 +38,13 @@ class LoginViewModel(
     fun handleEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.UpdateName -> {
-                state = state.copy(
-                    name = event.name,
-                    loginEnabled = enableLoginButton(name = event.name, email = state.email),
-                    invalidNameId = 0
-                )
+                if (event.name.length <= MAX_NAME_LENGTH) {
+                    state = state.copy(
+                        name = event.name,
+                        loginEnabled = enableLoginButton(name = event.name, email = state.email),
+                        invalidNameId = 0
+                    )
+                }
             }
             is LoginEvent.UpdateEmail -> {
                 state = state.copy(
@@ -87,11 +92,11 @@ class LoginViewModel(
 
     private fun isValidName(name: String): Boolean {
         var result = true
-        if (name.isEmpty()) {
+        if (!name.isValidNameLength()) {
             handleEvent(LoginEvent.InvalidName(R.string.empty_name))
             result = false
         }
-        if (!name.isValidName()) {
+        if (!name.isValidNameCharacters()) {
             handleEvent(LoginEvent.InvalidName(R.string.invalid_name))
             result = false
         }

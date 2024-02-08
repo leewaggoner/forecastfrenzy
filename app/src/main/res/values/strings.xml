@@ -25,13 +25,13 @@
     <string name="total_score">Your total score is</string>
     <string name="play">Play</string>
     <string name="name">Screen Name</string>
-    <string name="name_placeholder">MyCoolName99</string>
+    <string name="name_placeholder">MyC00lName</string>
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="email_placeholder">player@email.com</string>
     <string name="game_name">Forecast Frenzy!</string>
     <string name="please_log_in">Please log in.</string>
-    <string name="empty_name">You must enter a screen name.</string>
+    <string name="empty_name">You must enter up to 10 characters.</string>
     <string name="invalid_name">Only letters and numbers are allowed.</string>
     <string name="empty_email">You must enter an email address.</string>
     <string name="invalid_email">You must enter a valid email address.</string>

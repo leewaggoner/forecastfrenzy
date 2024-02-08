@@ -1,11 +1,11 @@
 package com.wreckingballsoftware.forecastfrenzy.domain
 
-import com.wreckingballsoftware.forecastfrenzy.data.models.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.data.models.CityResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.NetworkResponse
 import com.wreckingballsoftware.forecastfrenzy.data.models.TemperatureResponse
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.CityRepo
 import com.wreckingballsoftware.forecastfrenzy.data.repositories.WeatherRepo
+import com.wreckingballsoftware.forecastfrenzy.domain.models.ApiResult
 import com.wreckingballsoftware.forecastfrenzy.domain.models.GameCity
 import kotlin.math.roundToInt
 import kotlin.random.Random

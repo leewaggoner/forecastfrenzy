@@ -1,8 +1,13 @@
 package com.wreckingballsoftware.forecastfrenzy.utils
 
 import android.util.Patterns
+import com.wreckingballsoftware.forecastfrenzy.ui.login.MAX_NAME_LENGTH
 
-fun String.isValidName(): Boolean {
+fun String.isValidNameLength(): Boolean {
+    return this.isNotEmpty() && this.length <= MAX_NAME_LENGTH
+}
+
+fun String.isValidNameCharacters(): Boolean {
     return this.all { it.isLetterOrDigit() }
 }
 
