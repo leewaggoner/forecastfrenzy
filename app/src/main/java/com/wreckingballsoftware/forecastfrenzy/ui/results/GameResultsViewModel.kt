@@ -117,7 +117,7 @@ class GameResultsViewModel(
                 val isGameOver = gameplay.isGameOver()
                 state = state.copy(
                     isGameOver = isGameOver,
-                    buttonTextId = if (isGameOver) R.string.new_game else R.string.next_round,
+                    buttonTextId = if (isGameOver) R.string.start_game else R.string.next_round,
                     headlineTextId = if (isGameOver) R.string.game_results else R.string.round_results,
                     currentRound = gameplay.currentRound + 1,
                     cityName = cityName,

@@ -75,7 +75,7 @@ fun GameRulesScreenContent(
         FrenzyButton(
             modifier = Modifier
                 .padding(bottom = MaterialTheme.dimensions.spaceMedium),
-            text = stringResource(id = R.string.play)
+            text = stringResource(id = R.string.start_game)
         ) { handleEvent(RulesEvents.PlayGame) }
     }
 }
