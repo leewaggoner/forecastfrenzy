@@ -168,7 +168,11 @@ class GameplayTest {
         )
 
         runBlocking {
-            val temp = gameplay.getTemp { }
+            var temp = 0
+            gameplay.getTemp(
+                onSuccess = { temp = it },
+                onError = { }
+            )
             assert(temp == 100)
         }
     }
@@ -189,9 +193,12 @@ class GameplayTest {
         )
 
         runBlocking {
-            gameplay.getTemp {
-                assert( it == "Error code 0: Error getting temp")
-            }
+            gameplay.getTemp(
+                onSuccess = { },
+                 onError = {
+                    assert( it == "Error code 0: Error getting temp")
+                 }
+            )
         }
     }
 
@@ -211,9 +218,12 @@ class GameplayTest {
         )
 
         runBlocking {
-            gameplay.getTemp {
+            gameplay.getTemp(
+                onSuccess = { },
+                onError ={
                 assert( it == "Error code 0: Unknown network error")
             }
+            )
         }
     }
 }
