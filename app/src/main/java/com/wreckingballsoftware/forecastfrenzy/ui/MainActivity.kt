@@ -12,8 +12,6 @@ import com.wreckingballsoftware.forecastfrenzy.data.network.NetworkConnection
 import com.wreckingballsoftware.forecastfrenzy.domain.Login
 import com.wreckingballsoftware.forecastfrenzy.ui.navigation.ForecastHost
 import com.wreckingballsoftware.forecastfrenzy.ui.theme.ForecastFrenzyTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.ParametersHolder
@@ -28,7 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
 
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
 //            login.deletePlayerData()
             val isLoggedIn = login.isLoggedIn()
             setContent {
